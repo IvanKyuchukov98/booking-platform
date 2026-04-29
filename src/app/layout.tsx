@@ -1,12 +1,8 @@
-import type { Metadata } from "next";                                                                                                                                                                                                        import { Geist, Geist_Mono } from "next/font/google";
-import {
-  ClerkProvider,
-  Show,
-  SignInButton,
-  SignUpButton,
-  UserButton,
-} from "@clerk/nextjs";
+import type { Metadata } from "next";
+import { Geist, Geist_Mono } from "next/font/google";
+import { ClerkProvider } from "@clerk/nextjs";
 import Link from "next/link";
+import { HeaderNav } from "./components/HeaderNav";
 import "./globals.css";
 
 const geistSans = Geist({ variable: "--font-geist-sans", subsets: ["latin"] });
@@ -26,29 +22,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <Link href="/" className="text-lg font-semibold tracking-tight">
             BookSpace
           </Link>
-          <nav className="flex items-center gap-3">
-            <Show when="signed-out">
-              <SignInButton mode="modal">
-                <button className="text-sm font-medium text-gray-700 hover:text-gray-900">
-                  Sign in
-                </button>
-              </SignInButton>
-              <SignUpButton mode="modal">
-                <button className="rounded-full bg-gray-900 px-4 py-2 text-sm font-medium text-white hover:bg-gray-800">
-                  Sign up
-                </button>
-              </SignUpButton>
-            </Show>
-            <Show when="signed-in">
-              <Link
-                  href="/dashboard"
-                  className="text-sm font-medium text-gray-700 hover:text-gray-900"
-              >
-                Dashboard
-              </Link>
-              <UserButton />
-            </Show>
-          </nav>
+          <HeaderNav />
         </header>
         {children}
         </body>
