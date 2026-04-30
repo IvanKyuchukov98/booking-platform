@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(awk '-F\"text\":\"' '/\"role\":\"assistant\".*\"text\":\"/ {for\\(i=2;i<=NF;i++\\) print substr\\($i, 1, 800\\)}' C:/Users/urkqsrk/.claude/projects/C--Users-urkqsrk/0b8ca55b-20f9-4794-84f8-236c40c19d65.jsonl)",
+      "Bash(git -C C:/Users/urkqsrk/FEProjects/J/booking-platform log --all --oneline -- AGENTS.md CLAUDE.md)",
+      "Bash(git -C C:/Users/urkqsrk/FEProjects/J/booking-platform/ blame AGENTS.md)",
+      "Bash(npm install *)"
+    ]
+  }
+}
