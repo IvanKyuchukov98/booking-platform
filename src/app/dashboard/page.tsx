@@ -21,18 +21,26 @@ export default async function DashboardPage() {
                         You have <strong>{bookingCount}</strong> bookings.
                     </p>
                 </div>
-                {isAdmin && (
+                <div className="flex gap-2">
                     <Link
-                        href="/admin/services"
-                        className="rounded-full bg-gray-900 px-4 py-2 text-sm font-medium text-white hover:bg-gray-800"
+                        href="/services"
+                        className="rounded-full border border-gray-300 px-4 py-2 text-sm font-medium text-gray-800 hover:bg-gray-50"
                     >
-                        Admin panel
+                        Browse services
                     </Link>
-                )}
+                    {isAdmin && (
+                        <Link
+                            href="/admin/services"
+                            className="rounded-full bg-gray-900 px-4 py-2 text-sm font-medium text-white hover:bg-gray-800"
+                        >
+                            Admin panel
+                        </Link>
+                    )}
+                </div>
             </div>
 
             <div className="rounded-lg border border-dashed border-gray-300 p-8 text-center text-sm text-gray-500">
-                Empty
+                My bookings list — coming Day 5
             </div>
         </main>
     );
