@@ -49,6 +49,7 @@ export async function createService(
 
     await prisma.service.create({ data: parsed.data });
     revalidatePath("/admin/services");
+    revalidatePath("/services");
 
     return { ok: true, error: null };
 }
@@ -67,4 +68,6 @@ export async function toggleServiceActive(serviceId: string) {
         data: { isActive: !service.isActive },
     });
     revalidatePath("/admin/services");
+    revalidatePath("/services");
+    revalidatePath(`/services/${serviceId}`);
 }
