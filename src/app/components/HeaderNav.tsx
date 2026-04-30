@@ -3,14 +3,10 @@
 import { useClerk, useUser, UserButton } from "@clerk/nextjs";
 import Link from "next/link";
 
-// Client component: reads Clerk auth state reactively, opens modals via the
-// useClerk hook. No <SignInButton> wrapping, no children edge cases, and the
-// nav re-renders the moment the user signs in or out.
 export function HeaderNav() {
     const { isLoaded, isSignedIn } = useUser();
     const { openSignIn, openSignUp } = useClerk();
 
-    // Reserve space during hydration to prevent layout shift.
     if (!isLoaded) {
         return <nav className="flex h-9 items-center gap-3" />;
     }
