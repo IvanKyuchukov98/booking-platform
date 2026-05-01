@@ -4,15 +4,15 @@ import { useActionState, useEffect, useRef } from "react";
 import { createService, type CreateServiceState } from "./actions";
 import {Toast} from "@/app/components/Toast";
 
-const initialState: CreateServiceState = { error: null, ok: false };
+const initialState: CreateServiceState = { error: null, ok: false, lastCreatedId: null };
 
 export function CreateServiceForm() {
     const [state, formAction, isPending] = useActionState(createService, initialState);
     const formRef = useRef<HTMLFormElement>(null);
 
     useEffect(() => {
-        if (state.ok) formRef.current?.reset();
-    }, [state.ok]);
+        if (state.lastCreatedId) formRef.current?.reset();
+    }, [state.lastCreatedId]);
 
     return (
         <form
@@ -20,7 +20,9 @@ export function CreateServiceForm() {
             action={formAction}
             className="space-y-4 rounded-lg border border-gray-200 bg-white p-6"
         >
-            <Toast show={state.ok} message="Service created" />
+            {state.lastCreatedId && (
+                <Toast key={state.lastCreatedId} message="Service created" />
+            )}
             <h2 className="text-lg font-semibold">New service</h2>
 
             <div>

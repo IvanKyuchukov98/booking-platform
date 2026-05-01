@@ -28,6 +28,7 @@ const CreateServiceSchema = z.object({
 export type CreateServiceState = {
     error: string | null;
     ok: boolean;
+    lastCreatedId: string | null;
 };
 
 export async function createService(
@@ -44,14 +45,18 @@ export async function createService(
     });
 
     if (!parsed.success) {
-        return { ok: false, error: parsed.error.issues[0]?.message ?? "Invalid input" };
+        return {
+            ok: false,
+            error: parsed.error.issues[0]?.message ?? "Invalid input",
+            lastCreatedId: null,
+        };
     }
 
-    await prisma.service.create({ data: parsed.data });
+    const created = await prisma.service.create({ data: parsed.data });
     revalidatePath("/admin/services");
     revalidatePath("/services");
 
-    return { ok: true, error: null };
+    return { ok: true, error: null, lastCreatedId: created.id };
 }
 
 export async function toggleServiceActive(serviceId: string) {
