@@ -2,6 +2,7 @@
 
 import { useActionState, useEffect, useRef } from "react";
 import { createService, type CreateServiceState } from "./actions";
+import {Toast} from "@/app/components/Toast";
 
 const initialState: CreateServiceState = { error: null, ok: false };
 
@@ -19,6 +20,7 @@ export function CreateServiceForm() {
             action={formAction}
             className="space-y-4 rounded-lg border border-gray-200 bg-white p-6"
         >
+            <Toast show={state.ok} message="Service created" />
             <h2 className="text-lg font-semibold">New service</h2>
 
             <div>
