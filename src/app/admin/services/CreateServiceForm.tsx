@@ -1,8 +1,11 @@
 "use client";
 
 import { useActionState, useEffect, useRef } from "react";
+import { Button } from "@/app/components/ui/Button";
+import { Card } from "@/app/components/ui/Card";
+import { Input, Label, Textarea } from "@/app/components/ui/Input";
+import { Toast } from "@/app/components/Toast";
 import { createService, type CreateServiceState } from "./actions";
-import {Toast} from "@/app/components/Toast";
 
 const initialState: CreateServiceState = { error: null, ok: false, lastCreatedId: null };
 
@@ -15,100 +18,75 @@ export function CreateServiceForm() {
     }, [state.lastCreatedId]);
 
     return (
-        <form
-            ref={formRef}
-            action={formAction}
-            className="space-y-4 rounded-lg border border-gray-200 bg-white p-6"
-        >
+        <Card className="p-6">
             {state.lastCreatedId && (
                 <Toast key={state.lastCreatedId} message="Service created" />
             )}
-            <h2 className="text-lg font-semibold">New service</h2>
+            <h2 className="text-xl leading-[28px] font-semibold text-white-1a1c1c mb-4">New service</h2>
 
-            <div>
-                <label htmlFor="name" className="mb-1 block text-sm font-medium text-gray-700">
-                    Name
-                </label>
-                <input
-                    id="name"
-                    name="name"
-                    type="text"
-                    required
-                    maxLength={100}
-                    placeholder="e.g. Men's haircut"
-                    className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-gray-900 focus:outline-none"
-                />
-            </div>
-
-            <div>
-                <label
-                    htmlFor="description"
-                    className="mb-1 block text-sm font-medium text-gray-700"
-                >
-                    Description <span className="text-gray-400">(optional)</span>
-                </label>
-                <textarea
-                    id="description"
-                    name="description"
-                    rows={2}
-                    maxLength={500}
-                    className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-gray-900 focus:outline-none"
-                />
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
+            <form ref={formRef} action={formAction} className="space-y-3">
                 <div>
-                    <label
-                        htmlFor="durationMinutes"
-                        className="mb-1 block text-sm font-medium text-gray-700"
-                    >
-                        Duration (minutes)
-                    </label>
-                    <input
-                        id="durationMinutes"
-                        name="durationMinutes"
-                        type="number"
+                    <Label htmlFor="name">Name</Label>
+                    <Input
+                        id="name"
+                        name="name"
+                        type="text"
                         required
-                        min={5}
-                        max={480}
-                        step={5}
-                        defaultValue={30}
-                        className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-gray-900 focus:outline-none"
+                        maxLength={100}
+                        placeholder="e.g. Men's haircut"
                     />
                 </div>
+
                 <div>
-                    <label
-                        htmlFor="priceCents"
-                        className="mb-1 block text-sm font-medium text-gray-700"
-                    >
-                        Price (cents)
-                    </label>
-                    <input
-                        id="priceCents"
-                        name="priceCents"
-                        type="number"
-                        required
-                        min={0}
-                        step={50}
-                        defaultValue={2000}
-                        className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-gray-900 focus:outline-none"
+                    <Label htmlFor="description">
+                        Description <span className="text-gray-727785">(optional)</span>
+                    </Label>
+                    <Textarea
+                        id="description"
+                        name="description"
+                        rows={2}
+                        maxLength={500}
                     />
                 </div>
-            </div>
 
-            {state.error && (
-                <p className="rounded-md bg-red-50 px-3 py-2 text-sm text-red-700">
-                    {state.error}
-                </p>
-            )}
+                <div className="grid grid-cols-2 gap-3">
+                    <div>
+                        <Label htmlFor="durationMinutes">Duration (min)</Label>
+                        <Input
+                            id="durationMinutes"
+                            name="durationMinutes"
+                            type="number"
+                            required
+                            min={5}
+                            max={480}
+                            step={5}
+                            defaultValue={30}
+                        />
+                    </div>
+                    <div>
+                        <Label htmlFor="priceCents">Price (cents)</Label>
+                        <Input
+                            id="priceCents"
+                            name="priceCents"
+                            type="number"
+                            required
+                            min={0}
+                            step={50}
+                            defaultValue={2000}
+                        />
+                    </div>
+                </div>
 
-            <button
-                type="submit"
-                disabled={isPending}
-                className="rounded-full bg-gray-900 px-5 py-2 text-sm font-medium text-white hover:bg-gray-800 disabled:cursor-not-allowed disabled:bg-gray-400"
-            >
-                {isPending ? "Creating…" : "Create service"}
-            </button>
-        </form>
+                {state.error && (
+                    <p className="bg-pink-ffdad6 text-red-93000a rounded-md px-3 py-2 text-sm leading-[20px]">
+                        {state.error}
+                    </p>
+                )}
+
+                <Button type="submit" variant="primary" disabled={isPending}>
+                    {isPending ? "Creating…" : "Create service"}
+                </Button>
+            </form>
+        </Card>
     );
 }

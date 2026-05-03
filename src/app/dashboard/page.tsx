@@ -2,6 +2,9 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getOrCreateDbUser } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { Badge } from "@/app/components/ui/Badge";
+import { Button } from "@/app/components/ui/Button";
+import { Card } from "@/app/components/ui/Card";
 import { CancelBookingButton } from "./CancelBookingButton";
 
 function formatPrice(cents: number) {
@@ -53,126 +56,126 @@ export default async function DashboardPage() {
     const total = upcoming.length + history.length;
 
     return (
-        <main className="mx-auto max-w-4xl px-6 py-16">
-            <div className="mb-10 flex items-start justify-between gap-4">
-                <div>
-                    <h1 className="mb-2 text-3xl font-bold tracking-tight">
+        <main className="mx-auto max-w-[1200px] px-4 py-6">
+            <Card className="mb-6 flex flex-col items-start justify-between gap-4 p-6 md:flex-row md:items-center">
+                <div className="space-y-1">
+                    <h1 className="text-2xl leading-[32px] font-semibold text-white-1a1c1c">
                         Welcome, {user.name ?? user.email}.
                     </h1>
-                    <p className="text-gray-600">
-                        You have <strong>{upcoming.length}</strong> upcoming{" "}
-                        {upcoming.length === 1 ? "booking" : "bookings"}.
+                    <p className=" text-gray-5f5e5e">
+                        You have{" "}
+                        <span className="text-white-1a1c1c font-semibold">
+                            {upcoming.length}
+                        </span>{" "}
+                        upcoming {upcoming.length === 1 ? "booking" : "bookings"}.
                     </p>
                 </div>
                 <div className="flex gap-2">
-                    <Link
-                        href="/services"
-                        className="rounded-full border border-gray-300 px-4 py-2 text-sm font-medium text-gray-800 hover:bg-gray-50"
-                    >
-                        Browse services
+                    <Link href="/services">
+                        <Button variant="secondary">Browse services</Button>
                     </Link>
                     {isAdmin && (
-                        <Link
-                            href="/admin/services"
-                            className="rounded-full bg-gray-900 px-4 py-2 text-sm font-medium text-white hover:bg-gray-800"
-                        >
-                            Admin panel
+                        <Link href="/admin/services">
+                            <Button variant="primary">Admin panel</Button>
                         </Link>
                     )}
                 </div>
-            </div>
+            </Card>
 
             {total === 0 ? (
-                <section>
-                    <h2 className="mb-4 text-lg font-semibold">My bookings</h2>
-                    <div className="rounded-lg border border-dashed border-gray-300 p-8 text-center text-sm text-gray-500">
-                        No bookings yet.{" "}
-                        <Link href="/services" className="text-gray-900 underline">
-                            Browse services
-                        </Link>{" "}
-                        to make your first one.
+                <Card className="p-6">
+                    <h2 className="text-xl leading-[28px] font-semibold text-white-1a1c1c mb-3">My bookings</h2>
+                    <div className="border border-dashed border-gray-c2c6d6 rounded-lg px-6 py-12 text-center">
+                        <p className="text-sm leading-[20px] text-gray-5f5e5e">
+                            No bookings yet.{" "}
+                            <Link
+                                href="/services"
+                                className="text-blue-0058be hover:underline font-medium"
+                            >
+                                Browse services
+                            </Link>{" "}
+                            to make your first one.
+                        </p>
                     </div>
-                </section>
+                </Card>
             ) : (
-                <div className="space-y-10">
+                <div className="space-y-6">
                     {upcoming.length > 0 && (
-                        <section>
-                            <h2 className="mb-4 text-lg font-semibold">Upcoming</h2>
-                            <ul className="divide-y divide-gray-200 rounded-lg border border-gray-200 bg-white">
+                        <Card className="overflow-hidden">
+                            <div className="bg-white-f3f3f3 border-b border-gray-c2c6d6 px-6 py-3">
+                                <h2 className="text-xl leading-[28px] font-semibold text-white-1a1c1c">Upcoming</h2>
+                            </div>
+                            <ul className="divide-y divide-gray-c2c6d6">
                                 {upcoming.map((b) => (
                                     <li
                                         key={b.id}
-                                        className="flex items-center justify-between gap-4 px-5 py-4"
+                                        className="flex items-center justify-between gap-4 px-6 py-4"
                                     >
-                                        <div>
+                                        <div className="space-y-1">
                                             <div className="flex items-center gap-2">
-                                                <span className="font-medium">{b.service.name}</span>
-                                                <span className="rounded-full bg-green-100 px-2 py-0.5 text-xs text-green-800">
-                                                    Upcoming
+                                                <span className="text-white-1a1c1c font-medium">
+                                                    {b.service.name}
                                                 </span>
+                                                <Badge variant="success">Upcoming</Badge>
                                             </div>
-                                            <p className="mt-1 text-sm text-gray-600">
-                                                {formatWhen(b.startsAt)}
+                                            <p className="text-sm leading-[20px] text-gray-5f5e5e">
+                                                {formatWhen(b.startsAt)} ·{" "}
+                                                {formatPrice(b.service.priceCents)}
                                             </p>
                                             {b.notes && (
-                                                <p className="mt-1 text-xs italic text-gray-500">
+                                                <p className="text-sm leading-[20px] text-gray-424754 italic">
                                                     &ldquo;{b.notes}&rdquo;
                                                 </p>
                                             )}
-                                            <p className="mt-1 text-xs text-gray-500">
-                                                {formatPrice(b.service.priceCents)}
-                                            </p>
                                         </div>
                                         <CancelBookingButton bookingId={b.id} />
                                     </li>
                                 ))}
                             </ul>
-                        </section>
+                        </Card>
                     )}
 
                     {history.length > 0 && (
-                        <section>
-                            <h2 className="mb-4 text-lg font-semibold">History</h2>
-                            <ul className="divide-y divide-gray-200 rounded-lg border border-gray-200 bg-white">
+                        <Card className="overflow-hidden">
+                            <div className="bg-white-f3f3f3 border-b border-gray-c2c6d6 px-6 py-3">
+                                <h2 className="text-xl leading-[28px] font-semibold text-white-1a1c1c">History</h2>
+                            </div>
+                            <ul className="divide-y divide-gray-c2c6d6">
                                 {history.map((b) => {
                                     const isCancelled = b.status === "CANCELLED";
                                     return (
                                         <li
                                             key={b.id}
-                                            className="flex items-center justify-between gap-4 px-5 py-4"
+                                            className="flex items-center justify-between gap-4 px-6 py-4"
                                         >
-                                            <div>
+                                            <div className="space-y-1">
                                                 <div className="flex items-center gap-2">
-                                                    <span className="font-medium">
+                                                    <span className="text-white-1a1c1c font-medium">
                                                         {b.service.name}
                                                     </span>
-                                                    <span
-                                                        className={`rounded-full px-2 py-0.5 text-xs ${
-                                                            isCancelled
-                                                                ? "bg-red-100 text-red-800"
-                                                                : "bg-gray-100 text-gray-700"
-                                                        }`}
+                                                    <Badge
+                                                        variant={
+                                                            isCancelled ? "danger" : "neutral"
+                                                        }
                                                     >
                                                         {isCancelled ? "Cancelled" : "Past"}
-                                                    </span>
+                                                    </Badge>
                                                 </div>
-                                                <p className="mt-1 text-sm text-gray-600">
-                                                    {formatWhen(b.startsAt)}
+                                                <p className="text-sm leading-[20px] text-gray-5f5e5e">
+                                                    {formatWhen(b.startsAt)} ·{" "}
+                                                    {formatPrice(b.service.priceCents)}
                                                 </p>
                                                 {b.notes && (
-                                                    <p className="mt-1 text-xs italic text-gray-500">
+                                                    <p className="text-sm leading-[20px] text-gray-424754 italic">
                                                         &ldquo;{b.notes}&rdquo;
                                                     </p>
                                                 )}
-                                                <p className="mt-1 text-xs text-gray-500">
-                                                    {formatPrice(b.service.priceCents)}
-                                                </p>
                                             </div>
                                         </li>
                                     );
                                 })}
                             </ul>
-                        </section>
+                        </Card>
                     )}
                 </div>
             )}

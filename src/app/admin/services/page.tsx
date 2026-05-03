@@ -8,11 +8,14 @@ export default async function AdminServicesPage() {
     });
 
     return (
-        <div className="grid gap-10 md:grid-cols-[1fr_2fr]">
+        <div className="grid gap-6 md:grid-cols-[1fr_2fr]">
             <CreateServiceForm />
 
             <section>
-                <h2 className="mb-4 text-lg font-semibold">All services ({services.length})</h2>
+                <h2 className="text-xl leading-[28px] font-semibold text-white-1a1c1c mb-3">
+                    All services{" "}
+                    <span className="text-gray-5f5e5e font-normal">({services.length})</span>
+                </h2>
                 <AdminServicesTable data={services} />
             </section>
         </div>

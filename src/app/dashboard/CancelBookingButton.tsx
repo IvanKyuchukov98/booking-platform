@@ -1,18 +1,15 @@
 "use client";
 
 import { useFormStatus } from "react-dom";
+import { Button } from "@/app/components/ui/Button";
 import { cancelBooking } from "./actions";
 
 function SubmitButton() {
     const { pending } = useFormStatus();
     return (
-        <button
-            type="submit"
-            disabled={pending}
-            className="rounded-full border border-gray-300 px-3 py-1 text-xs font-medium text-gray-700 hover:bg-gray-50 disabled:cursor-not-allowed disabled:text-gray-400"
-        >
+        <Button type="submit" variant="secondary" size="sm" disabled={pending}>
             {pending ? "Cancelling…" : "Cancel"}
-        </button>
+        </Button>
     );
 }
 

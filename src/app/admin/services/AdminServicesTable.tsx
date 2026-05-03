@@ -11,6 +11,10 @@ import {
     useReactTable,
 } from "@tanstack/react-table";
 import { useFormStatus } from "react-dom";
+import { Badge } from "@/app/components/ui/Badge";
+import { Button } from "@/app/components/ui/Button";
+import { Card } from "@/app/components/ui/Card";
+import { Input } from "@/app/components/ui/Input";
 import { toggleServiceActive } from "./actions";
 
 export type AdminServiceRow = {
@@ -37,13 +41,9 @@ function formatDuration(minutes: number) {
 function ToggleButton({ isActive }: { isActive: boolean }) {
     const { pending } = useFormStatus();
     return (
-        <button
-            type="submit"
-            disabled={pending}
-            className="rounded-full border border-gray-300 px-3 py-1 text-xs font-medium text-gray-700 hover:bg-gray-50 disabled:cursor-not-allowed disabled:text-gray-400"
-        >
+        <Button type="submit" variant="secondary" size="sm" disabled={pending}>
             {pending ? "…" : isActive ? "Hide" : "Show"}
-        </button>
+        </Button>
     );
 }
 
@@ -61,15 +61,15 @@ export function AdminServicesTable({ data }: { data: AdminServiceRow[] }) {
                 cell: ({ row }) => (
                     <div>
                         <div className="flex items-center gap-2">
-                            <span className="font-medium">{row.original.name}</span>
+                            <span className="text-sm leading-[20px] text-white-1a1c1c font-medium">
+                                {row.original.name}
+                            </span>
                             {!row.original.isActive && (
-                                <span className="rounded-full bg-gray-100 px-2 py-0.5 text-xs text-gray-600">
-                                    Hidden
-                                </span>
+                                <Badge variant="neutral">Hidden</Badge>
                             )}
                         </div>
                         {row.original.description && (
-                            <p className="mt-0.5 max-w-md truncate text-xs text-gray-500">
+                            <p className="text-sm leading-[20px] text-gray-5f5e5e mt-1 max-w-3 truncate">
                                 {row.original.description}
                             </p>
                         )}
@@ -80,7 +80,7 @@ export function AdminServicesTable({ data }: { data: AdminServiceRow[] }) {
                 accessorKey: "durationMinutes",
                 header: "Duration",
                 cell: ({ getValue }) => (
-                    <span className="text-sm text-gray-600">
+                    <span className="text-sm leading-[20px] text-gray-5f5e5e">
                         {formatDuration(getValue<number>())}
                     </span>
                 ),
@@ -89,7 +89,7 @@ export function AdminServicesTable({ data }: { data: AdminServiceRow[] }) {
                 accessorKey: "priceCents",
                 header: "Price",
                 cell: ({ getValue }) => (
-                    <span className="text-sm tabular-nums text-gray-600">
+                    <span className="text-sm leading-[20px] text-gray-5f5e5e tabular-nums">
                         {formatPrice(getValue<number>())}
                     </span>
                 ),
@@ -98,7 +98,7 @@ export function AdminServicesTable({ data }: { data: AdminServiceRow[] }) {
                 accessorKey: "createdAt",
                 header: "Created",
                 cell: ({ getValue }) => (
-                    <span className="text-xs text-gray-500">
+                    <span className="text-sm leading-[20px] text-gray-5f5e5e">
                         {getValue<Date>().toLocaleDateString()}
                     </span>
                 ),
@@ -132,94 +132,100 @@ export function AdminServicesTable({ data }: { data: AdminServiceRow[] }) {
 
     return (
         <div className="space-y-3">
-            <div className="flex items-center justify-between">
-                <input
+            <div className="flex items-center justify-between gap-3">
+                <Input
                     type="search"
                     value={filter}
                     onChange={(e) => setFilter(e.target.value)}
                     placeholder="Filter by name…"
-                    className="w-64 rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-gray-900 focus:outline-none"
+                    className="w-64"
                 />
-                <span className="text-xs text-gray-500">
+                <span className="text-xs leading-[16px] font-medium text-gray-727785">
                     {table.getRowModel().rows.length} of {data.length}
                 </span>
             </div>
 
             {data.length === 0 ? (
-                <div className="rounded-lg border border-dashed border-gray-300 p-8 text-center text-sm text-gray-500">
-                    No services yet. Create your first one →
-                </div>
+                <Card className="p-6">
+                    <div className="border border-dashed border-gray-c2c6d6 rounded-lg px-6 py-12 text-center">
+                        <p className="text-sm leading-[20px] text-gray-5f5e5e">
+                            No services yet. Create your first one →
+                        </p>
+                    </div>
+                </Card>
             ) : (
-                <div className="overflow-hidden rounded-lg border border-gray-200 bg-white">
-                    <table className="w-full text-left">
-                        <thead className="border-b border-gray-200 bg-gray-50 text-xs uppercase tracking-wide text-gray-600">
-                            {table.getHeaderGroups().map((hg) => (
-                                <tr key={hg.id}>
-                                    {hg.headers.map((header) => {
-                                        const canSort = header.column.getCanSort();
-                                        const sorted = header.column.getIsSorted();
-                                        return (
-                                            <th
-                                                key={header.id}
-                                                scope="col"
-                                                className="px-4 py-3"
-                                            >
-                                                {canSort ? (
-                                                    <button
-                                                        type="button"
-                                                        onClick={header.column.getToggleSortingHandler()}
-                                                        className="inline-flex items-center gap-1 hover:text-gray-900"
-                                                    >
-                                                        {flexRender(
+                <Card className="overflow-hidden">
+                    <div className="overflow-x-auto">
+                        <table className="w-full text-left">
+                            <thead className="bg-white-f3f3f3 border-b border-gray-c2c6d6">
+                                {table.getHeaderGroups().map((hg) => (
+                                    <tr key={hg.id}>
+                                        {hg.headers.map((header) => {
+                                            const canSort = header.column.getCanSort();
+                                            const sorted = header.column.getIsSorted();
+                                            return (
+                                                <th
+                                                    key={header.id}
+                                                    scope="col"
+                                                    className="px-4 py-3 text-xs leading-[16px] font-medium text-gray-727785 uppercase tracking-wide"
+                                                >
+                                                    {canSort ? (
+                                                        <button
+                                                            type="button"
+                                                            onClick={header.column.getToggleSortingHandler()}
+                                                            className="inline-flex items-center gap-1 hover:text-white-1a1c1c transition-colors"
+                                                        >
+                                                            {flexRender(
+                                                                header.column.columnDef.header,
+                                                                header.getContext(),
+                                                            )}
+                                                            <span className="opacity-60">
+                                                                {sorted === "asc"
+                                                                    ? "↑"
+                                                                    : sorted === "desc"
+                                                                      ? "↓"
+                                                                      : "↕"}
+                                                            </span>
+                                                        </button>
+                                                    ) : (
+                                                        flexRender(
                                                             header.column.columnDef.header,
                                                             header.getContext(),
-                                                        )}
-                                                        <span className="text-gray-400">
-                                                            {sorted === "asc"
-                                                                ? "↑"
-                                                                : sorted === "desc"
-                                                                  ? "↓"
-                                                                  : "↕"}
-                                                        </span>
-                                                    </button>
-                                                ) : (
-                                                    flexRender(
-                                                        header.column.columnDef.header,
-                                                        header.getContext(),
-                                                    )
+                                                        )
+                                                    )}
+                                                </th>
+                                            );
+                                        })}
+                                    </tr>
+                                ))}
+                            </thead>
+                            <tbody className="divide-y divide-gray-c2c6d6">
+                                {table.getRowModel().rows.map((row) => (
+                                    <tr key={row.id} className="hover:bg-white-f3f3f3 transition-colors">
+                                        {row.getVisibleCells().map((cell) => (
+                                            <td key={cell.id} className="px-4 py-3">
+                                                {flexRender(
+                                                    cell.column.columnDef.cell,
+                                                    cell.getContext(),
                                                 )}
-                                            </th>
-                                        );
-                                    })}
-                                </tr>
-                            ))}
-                        </thead>
-                        <tbody className="divide-y divide-gray-200">
-                            {table.getRowModel().rows.map((row) => (
-                                <tr key={row.id} className="hover:bg-gray-50">
-                                    {row.getVisibleCells().map((cell) => (
-                                        <td key={cell.id} className="px-4 py-3">
-                                            {flexRender(
-                                                cell.column.columnDef.cell,
-                                                cell.getContext(),
-                                            )}
+                                            </td>
+                                        ))}
+                                    </tr>
+                                ))}
+                                {table.getRowModel().rows.length === 0 && (
+                                    <tr>
+                                        <td
+                                            colSpan={columns.length}
+                                            className="px-4 py-12 text-center text-sm leading-[20px] text-gray-5f5e5e"
+                                        >
+                                            No services match &ldquo;{filter}&rdquo;.
                                         </td>
-                                    ))}
-                                </tr>
-                            ))}
-                            {table.getRowModel().rows.length === 0 && (
-                                <tr>
-                                    <td
-                                        colSpan={columns.length}
-                                        className="px-4 py-8 text-center text-sm text-gray-500"
-                                    >
-                                        No services match &ldquo;{filter}&rdquo;.
-                                    </td>
-                                </tr>
-                            )}
-                        </tbody>
-                    </table>
-                </div>
+                                    </tr>
+                                )}
+                            </tbody>
+                        </table>
+                    </div>
+                </Card>
             )}
         </div>
     );

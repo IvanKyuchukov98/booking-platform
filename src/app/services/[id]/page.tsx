@@ -2,6 +2,8 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { auth } from "@clerk/nextjs/server";
 import { prisma } from "@/lib/prisma";
+import { Button } from "@/app/components/ui/Button";
+import { Card } from "@/app/components/ui/Card";
 import { generateAvailableSlots, formatSlotLabel } from "@/lib/slots";
 import { BookingForm } from "./BookingForm";
 
@@ -48,36 +50,38 @@ export default async function ServiceDetailPage({
     }));
 
     return (
-        <main className="mx-auto max-w-2xl px-6 py-12">
+        <main className="mx-auto max-w-2xl px-4 py-6">
             <Link
                 href="/services"
-                className="mb-6 inline-block text-sm text-gray-500 hover:text-gray-700"
+                className="inline-block mb-4 text-sm leading-[20px] text-gray-5f5e5e hover:text-white-1a1c1c transition-colors"
             >
                 ← Back to services
             </Link>
 
-            <header className="mb-8 rounded-lg border border-gray-200 bg-white p-6">
-                <h1 className="mb-2 text-2xl font-bold tracking-tight">{service.name}</h1>
+            <Card className="mb-6 p-6">
+                <h1 className="text-2xl leading-[32px] font-semibold text-white-1a1c1c mb-1">{service.name}</h1>
                 {service.description && (
-                    <p className="mb-3 text-gray-600">{service.description}</p>
+                    <p className=" text-gray-5f5e5e mb-3">
+                        {service.description}
+                    </p>
                 )}
-                <p className="text-sm text-gray-500">
-                    {formatDuration(service.durationMinutes)} · {formatPrice(service.priceCents)}
+                <p className="text-xs leading-[16px] font-medium text-gray-727785 uppercase tracking-wide">
+                    {formatDuration(service.durationMinutes)} ·{" "}
+                    {formatPrice(service.priceCents)}
                 </p>
-            </header>
+            </Card>
 
             {userId ? (
                 <BookingForm serviceId={service.id} slots={slotOptions} />
             ) : (
-                <div className="rounded-lg border border-gray-200 bg-white p-6 text-center">
-                    <p className="mb-4 text-sm text-gray-700">Sign in to book this service.</p>
-                    <Link
-                        href="/"
-                        className="inline-block rounded-full bg-gray-900 px-4 py-2 text-sm font-medium text-white hover:bg-gray-800"
-                    >
-                        Go to home & sign in
+                <Card className="p-6 text-center">
+                    <p className="text-white-1a1c1c mb-4">
+                        Sign in to book this service.
+                    </p>
+                    <Link href="/">
+                        <Button variant="primary">Go to home & sign in</Button>
                     </Link>
-                </div>
+                </Card>
             )}
         </main>
     );
