@@ -49,8 +49,8 @@ export default function RootLayout({
     <ClerkProvider>
       <html lang='en' className={inter.variable}>
         <body className='flex min-h-screen flex-col antialiased'>
-          <header className='border-gray-c2c6d6 border-b bg-white'>
-            <div className='mx-auto flex h-16 max-w-[1200px] items-center justify-between px-6'>
+          <header className='border-gray-c2c6d6 border-b bg-white px-6'>
+            <div className='mx-auto flex h-16 max-w-[1280px] items-center justify-between'>
               <Link
                 href='/'
                 className='text-white-1a1c1c text-xl leading-[28px] font-semibold tracking-tight'
@@ -60,7 +60,7 @@ export default function RootLayout({
               <HeaderNav />
             </div>
           </header>
-          <div className='flex-1'>{children}</div>
+          <div className='flex flex-1 flex-col'>{children}</div>
           <footer className='border-gray-e2e8f0 flex flex-col border-t'>
             <div className='border-gray-e2e8f0 border-b px-6'>
               <div className='mx-auto grid max-w-[1280px] grid-cols-4 gap-8 py-12'>

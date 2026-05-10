@@ -7,7 +7,7 @@ type Variant = 'light' | 'dark';
 
 const variantClass: Record<Variant, { input: string; border: string }> = {
   light: {
-    input: 'text-white placeholder-white/40 bg-white/10',
+    input: 'text-black-191c1e placeholder-gray-76777D ',
     border: 'border-white/20',
   },
   dark: {
@@ -23,6 +23,7 @@ type InputFieldProps = ComponentProps<'input'> & {
   error?: string;
   visibilityToggle?: boolean;
   containerClassName?: string;
+  inputClassName?: string;
   labelClassName?: string;
 };
 
@@ -33,6 +34,7 @@ export function InputField({
   error,
   visibilityToggle = false,
   containerClassName = '',
+  inputClassName = '',
   labelClassName = '',
   className = '',
   type = 'text',
@@ -51,9 +53,7 @@ export function InputField({
     <div className={` ${containerClassName}`}>
       <label className='relative'>
         {label && (
-          <span
-            className={`text-gray-1e1d1c font-onest font-normal ${labelClassName}`}
-          >
+          <span className={`text-gray-76777D font-semibold ${labelClassName}`}>
             {label}
             {required && <span className='text-[#FF6C22]'>*</span>}
           </span>
@@ -62,7 +62,7 @@ export function InputField({
         <input
           type={renderType}
           required={required}
-          className={`${v.input} ${label ? 'mt-1' : ''} flex h-[44px] items-center justify-center rounded-full border px-5 transition-opacity disabled:opacity-70 ${error ? 'border-[#E93655]' : v.border} ${className}`}
+          className={`${v.input} ${label ? 'mt-1' : ''} ${inputClassName} flex h-[44px] items-center justify-center rounded-full border px-5 transition-opacity disabled:opacity-70 ${error ? 'border-[#E93655]' : v.border} ${className}`}
           {...props}
         />
 

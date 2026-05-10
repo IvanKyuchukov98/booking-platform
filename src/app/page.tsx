@@ -1,6 +1,4 @@
-import Link from 'next/link';
 import { Button } from '@/src/app/components/ui/Button';
-import { Card } from '@/src/app/components/ui/Card';
 import Image from 'next/image';
 import heroImage from '@/public/images/Hero.png';
 import uniquqImage from '@/public/images/unique.png';
@@ -17,24 +15,9 @@ import { StarIcon } from '@/src/app/components/icons/StarIcon';
 import { HeartIcon } from '@/src/app/components/icons/HeartIcon';
 import { InputField } from '@/src/app/components/inputs/InputField';
 
-const features = [
-  {
-    title: 'Easy booking',
-    body: 'Find an open slot and confirm in under 30 seconds. No accounts to create, no friction.',
-  },
-  {
-    title: 'No phone tag',
-    body: 'Real-time availability means no double-booking, no missed calls, no rescheduling chains.',
-  },
-  {
-    title: 'Manage online',
-    body: 'Reschedule or cancel from any device. Your dashboard keeps everything organized.',
-  },
-];
-
 export default function Home() {
   return (
-    <main className='mx-auto mb-12'>
+    <main className='mx-auto mb-12 w-full'>
       <section className='mx-auto'>
         <div className='relative aspect-[1280/570] h-full w-full'>
           <Image
