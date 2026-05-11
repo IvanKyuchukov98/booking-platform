@@ -4,9 +4,9 @@ import { ClerkProvider } from '@clerk/nextjs';
 import Link from 'next/link';
 import { HeaderNav } from './components/HeaderNav';
 import './globals.css';
-import { GlobeIcon } from '@/src/app/components/icons/GlobeIcon';
-import { ShareIcon } from '@/src/app/components/icons/ShareIcon';
-import { CommentIcon } from '@/src/app/components/icons/CommentIcon';
+import { GlobeIcon } from '@/app/components/icons/GlobeIcon';
+import { ShareIcon } from '@/app/components/icons/ShareIcon';
+import { CommentIcon } from '@/app/components/icons/CommentIcon';
 
 const inter = localFont({
   src: [
@@ -36,8 +36,12 @@ const inter = localFont({
 });
 
 export const metadata: Metadata = {
-  title: 'BookSpace — Service Booking Platform',
-  description: 'Book appointments with local service providers in seconds.',
+  title: {
+    default: 'BookSpace — Curated stays around the world',
+    template: '%s · BookSpace',
+  },
+  description:
+    'Discover curated stays — from minimalist urban lofts to secluded coastal retreats. Book in seconds.',
 };
 
 export default function RootLayout({

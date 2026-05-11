@@ -1,7 +1,7 @@
 'use client';
 import { useState, type ComponentProps } from 'react';
-import { EyeIcon } from '@/src/app/components/icons/EyeIcon';
-import { EyeCrossedIcon } from '@/src/app/components/icons/EyeCrossedIcon';
+import { EyeIcon } from '@/app/components/icons/EyeIcon';
+import { EyeCrossedIcon } from '@/app/components/icons/EyeCrossedIcon';
 
 type Variant = 'light' | 'dark';
 

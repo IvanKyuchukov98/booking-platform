@@ -1,38 +1,147 @@
-import { Button } from '@/src/app/components/ui/Button';
-import Image from 'next/image';
-import room1Image from '@/public/images/room1.png';
-import room2Image from '@/public/images/room2.png';
-import room3Image from '@/public/images/room3.png';
-import { StarIcon } from '@/src/app/components/icons/StarIcon';
-import { HeartIcon } from '@/src/app/components/icons/HeartIcon';
-import { InputField } from '@/src/app/components/inputs/InputField';
+import { Button } from '@/app/components/ui/Button';
+import { InputField } from '@/app/components/inputs/InputField';
 import { CheckboxGroup } from '@/app/components/inputs/CheckboxGroup';
-import { SelectField } from '@/app/components/inputs/SelectField';
+import { prisma } from '@/lib/prisma';
+import { getOrCreateDbUser } from '@/lib/auth';
+import { EmptyState } from '@/app/components/EmptyState';
+import type { Metadata } from 'next';
+import { SortDropdown } from './SortDropdown';
+import { RoomCard } from './RoomCard';
+import type { Prisma } from '@prisma/client';
 
-export default function Home() {
+export const metadata: Metadata = {
+  title: 'Explore stays',
+  description:
+    'Browse curated stays — filter by price, amenities, and location to find your next escape.',
+};
+
+type Props = {
+  searchParams: Promise<{
+    q?: string;
+    min?: string;
+    max?: string;
+    amenities?: string | string[];
+    propertyType?: string | string[];
+    sort?: string;
+  }>;
+};
+
+function asArray(v: string | string[] | undefined): string[] {
+  if (!v) return [];
+  return Array.isArray(v) ? v : [v];
+}
+
+function parsePriceCents(s: string | undefined): number | undefined {
+  if (!s) return undefined;
+  const n = parseFloat(s);
+  if (Number.isNaN(n) || n <= 0) return undefined;
+  return Math.round(n * 100);
+}
+
+function buildOrderBy(
+  sort: string | undefined
+): Prisma.RoomOrderByWithRelationInput {
+  switch (sort) {
+    case 'price-low':
+      return { pricePerNight: 'asc' };
+    case 'price-high':
+      return { pricePerNight: 'desc' };
+    default:
+      return { createdAt: 'desc' };
+  }
+}
+
+export default async function RoomsPage({ searchParams }: Props) {
+  const sp = await searchParams;
+  const q = sp.q?.trim() || undefined;
+  const minCents = parsePriceCents(sp.min);
+  const maxCents = parsePriceCents(sp.max);
+  const amenitiesArr = asArray(sp.amenities);
+  const propertyTypesArr = asArray(sp.propertyType);
+  const currentSort = sp.sort ?? 'recommended';
+
+  const where: Prisma.RoomWhereInput = { isActive: true };
+  if (q) {
+    where.OR = [
+      { name: { contains: q, mode: 'insensitive' } },
+      { location: { contains: q, mode: 'insensitive' } },
+    ];
+  }
+  if (minCents !== undefined || maxCents !== undefined) {
+    where.pricePerNight = {
+      ...(minCents !== undefined ? { gte: minCents } : {}),
+      ...(maxCents !== undefined ? { lte: maxCents } : {}),
+    };
+  }
+  if (amenitiesArr.length > 0) {
+    where.amenities = { hasEvery: amenitiesArr };
+  }
+
+  const [rooms, user] = await Promise.all([
+    prisma.room.findMany({
+      where,
+      orderBy: buildOrderBy(currentSort),
+    }),
+    getOrCreateDbUser(),
+  ]);
+
+  const favoriteIds = user
+    ? new Set(
+        (
+          await prisma.favorite.findMany({
+            where: { userId: user.id },
+            select: { roomId: true },
+          })
+        ).map((f) => f.roomId)
+      )
+    : new Set<string>();
+
   return (
     <main className='bg-gray-eceef0 flex flex-1'>
       <div className='mx-auto flex w-full max-w-[1280px] flex-1'>
-        <aside className='flex w-80 flex-col bg-white p-6'>
+        <form
+          action='/rooms'
+          method='get'
+          className='flex w-80 flex-col bg-white p-6'
+        >
+          <input type='hidden' name='sort' value={currentSort} />
           <span className='text-black'>Filters</span>
+          <InputField
+            variant='light'
+            name='q'
+            type='text'
+            defaultValue={q ?? ''}
+            placeholder='Stay name or city'
+            className='!h-9 w-full !px-3'
+            label='Search'
+            labelClassName='text-xs'
+            inputClassName='!border-gray-c2c6d6 !rounded-[8px]'
+            containerClassName='mt-4 w-full'
+          />
           <span className='text-black-45464d mt-4 mb-2'>Price range</span>
           <div className='flex gap-1'>
             <InputField
               variant='light'
+              name='min'
+              type='number'
+              defaultValue={minCents !== undefined ? minCents / 100 : ''}
               className='!h-9 w-full !px-3'
               label='Min price'
               labelClassName='text-xs'
               inputClassName='!border-gray-c2c6d6 !rounded-[8px]'
               containerClassName='w-full max-w-[300px] '
-            ></InputField>
+            />
             <InputField
               variant='light'
+              name='max'
+              type='number'
+              defaultValue={maxCents !== undefined ? maxCents / 100 : ''}
               className='!h-9 w-full !px-3'
               label='Max price'
               labelClassName='text-xs'
               inputClassName='!border-gray-c2c6d6 !rounded-[8px]'
               containerClassName='w-full max-w-[300px] '
-            ></InputField>
+            />
           </div>
           <div className='bg-green-006a61 mt-4 mb-6 h-1 w-full rounded-full'></div>
           <CheckboxGroup
@@ -44,19 +153,19 @@ export default function Home() {
               { value: 'villas', label: 'Villas' },
               { value: 'resorts', label: 'Resorts' },
             ]}
-            defaultValue={['hotels']}
+            defaultValue={propertyTypesArr}
           />
           <CheckboxGroup
             label='Amenities'
             name='amenities'
             containerClassName='mt-6'
             options={[
-              { value: 'free-wo-fi', label: 'Free Wi-Fi' },
-              { value: 'swimming-pool', label: 'Swimming Pool' },
-              { value: 'gym', label: 'Gym' },
-              { value: 'pet-friendly', label: 'Pet Friendly' },
+              { value: 'wifi', label: 'Free Wi-Fi' },
+              { value: 'pool', label: 'Swimming Pool' },
+              { value: 'kitchen', label: 'Full Kitchen' },
+              { value: 'parking', label: 'Parking' },
             ]}
-            defaultValue={['hotels']}
+            defaultValue={amenitiesArr}
           />
           <Button
             variant='roundedFill'
@@ -64,228 +173,36 @@ export default function Home() {
           >
             <span className='text-white'>Show Results</span>
           </Button>
-        </aside>
+        </form>
         <section className='flex w-full flex-col gap-8 p-6'>
           <div className='flex justify-between'>
             <div className='flex flex-col'>
               <span className='text-gray-76777D text-sm font-medium'>
-                328 STAYS FOUND
+                {rooms.length} STAYS FOUND
               </span>
-              <span className='text-black'>Stays in Amsterdam</span>
+              <span className='text-black'>Featured stays</span>
             </div>
-            <SelectField
-              name='propertyType'
-              placeholder='Sort by:'
-              containerClassName='max-w-[200px] w-full'
-              options={[
-                { value: 'recommended', label: 'Recommended' },
-                { value: 'price-low', label: 'Price low' },
-                { value: 'price-high', label: 'Price high' },
-                { value: 'rating', label: 'Rating' },
-              ]}
+            <SortDropdown />
+          </div>
+          {rooms.length === 0 ? (
+            <EmptyState
+              title='No stays match your filters'
+              subtitle='Try widening the price range or removing some amenities.'
+              ctaHref='/rooms'
+              ctaLabel='Clear filters'
+              className='rounded-[16px] bg-white p-12'
             />
-          </div>
-
-          <div className='flex flex-col gap-6'>
-            <div className='flex overflow-hidden rounded-[16px] bg-white'>
-              <div className='relative w-full max-w-60 shrink-0 self-stretch'>
-                <Image
-                  src={room1Image}
-                  alt=''
-                  fill
-                  sizes='240px'
-                  className='object-cover'
+          ) : (
+            <div className='flex flex-col gap-6'>
+              {rooms.map((room) => (
+                <RoomCard
+                  key={room.id}
+                  room={room}
+                  isFavorited={favoriteIds.has(room.id)}
                 />
-                <button className='bg-gray-cfcfcf absolute top-4 right-4 cursor-pointer rounded-full p-1'>
-                  <HeartIcon className='fill-black-0f172a h-6 w-6' />
-                </button>
-              </div>
-
-              <div className='flex w-full flex-col p-6'>
-                <div className='flex items-center justify-between'>
-                  <span className='text-green-006a61 text-xs font-bold'>
-                    SUPERHOST
-                  </span>
-
-                  <div className='flex items-center gap-1'>
-                    <StarIcon className='fill-green-006a61 h-4 w-4' />
-                    <span className='text-black-191c1e text-sm font-bold'>
-                      4.9
-                    </span>
-                    <span className='text-gray-76777D text-sm font-medium'>
-                      (128)
-                    </span>
-                  </div>
-                </div>
-
-                <h2 className='font-semibold text-black'>
-                  The Canal House Boutique
-                </h2>
-                <span className='text-black-45464d'>
-                  Centrum, Amsterdam • 500m from city center
-                </span>
-                <div className='my-4 flex flex-wrap gap-2'>
-                  <span className='bg-gray-e6e8eA text-black-191c1e rounded-full px-3 py-1 text-xs font-semibold text-nowrap'>
-                    Free Wi-Fi
-                  </span>
-                  <span className='bg-gray-e6e8eA text-black-191c1e rounded-full px-3 py-1 text-xs font-semibold text-nowrap'>
-                    Breakfast included
-                  </span>
-                  <span className='bg-gray-e6e8eA text-black-191c1e rounded-full px-3 py-1 text-xs font-semibold text-nowrap'>
-                    Historic view
-                  </span>
-                </div>
-
-                <div className='mt-auto flex items-end justify-between'>
-                  <span className='text-black'>
-                    $245
-                    <span className='text-gray-76777D text-sm font-medium'>
-                      {' '}
-                      / night
-                    </span>
-                  </span>
-                  <Button
-                    variant='roundedFill'
-                    className='bg-green-006a61 h-12 !rounded-[16px] px-6'
-                  >
-                    <span className='text-white'>View Property</span>
-                  </Button>
-                </div>
-              </div>
+              ))}
             </div>
-            <div className='flex overflow-hidden rounded-[16px] bg-white'>
-              <div className='relative w-full max-w-60 shrink-0 self-stretch'>
-                <Image
-                  src={room2Image}
-                  alt=''
-                  fill
-                  sizes='240px'
-                  className='object-cover'
-                />
-                <button className='bg-gray-cfcfcf absolute top-4 right-4 cursor-pointer rounded-full p-1'>
-                  <HeartIcon className='fill-black-0f172a h-6 w-6' />
-                </button>
-              </div>
-
-              <div className='flex w-full flex-col p-6'>
-                <div className='flex items-center justify-between'>
-                  <span className='text-blue-008ebf text-xs font-bold'>
-                    RARE FIND
-                  </span>
-
-                  <div className='flex items-center gap-1'>
-                    <StarIcon className='fill-green-006a61 h-4 w-4' />
-                    <span className='text-black-191c1e text-sm font-bold'>
-                      4.8
-                    </span>
-                    <span className='text-gray-76777D text-sm font-medium'>
-                      (84)
-                    </span>
-                  </div>
-                </div>
-
-                <h2 className='font-semibold text-black'>
-                  Industrial Loft at NDSM
-                </h2>
-                <span className='text-black-45464d'>
-                  Noord, Amsterdam • 15 min by ferry
-                </span>
-                <div className='my-4 flex flex-wrap gap-2'>
-                  <span className='bg-gray-e6e8eA text-black-191c1e rounded-full px-3 py-1 text-xs font-semibold text-nowrap'>
-                    Full Kitchen
-                  </span>
-                  <span className='bg-gray-e6e8eA text-black-191c1e rounded-full px-3 py-1 text-xs font-semibold text-nowrap'>
-                    Workspace
-                  </span>
-                  <span className='bg-gray-e6e8eA text-black-191c1e rounded-full px-3 py-1 text-xs font-semibold text-nowrap'>
-                    Pet Friendly
-                  </span>
-                </div>
-
-                <div className='mt-auto flex items-end justify-between'>
-                  <span className='text-black'>
-                    $189
-                    <span className='text-gray-76777D text-sm font-medium'>
-                      {' '}
-                      / night
-                    </span>
-                  </span>
-                  <Button
-                    variant='roundedFill'
-                    className='bg-green-006a61 h-12 !rounded-[16px] px-6'
-                  >
-                    <span className='text-white'>View Property</span>
-                  </Button>
-                </div>
-              </div>
-            </div>
-            <div className='flex overflow-hidden rounded-[16px] bg-white'>
-              <div className='relative w-full max-w-60 shrink-0 self-stretch'>
-                <Image
-                  src={room3Image}
-                  alt=''
-                  fill
-                  sizes='240px'
-                  className='object-cover'
-                />
-                <button className='bg-gray-cfcfcf absolute top-4 right-4 cursor-pointer rounded-full p-1'>
-                  <HeartIcon className='fill-black-0f172a h-6 w-6' />
-                </button>
-              </div>
-
-              <div className='flex w-full flex-col p-6'>
-                <div className='flex items-center justify-between'>
-                  <span className='text-green-006a61 text-xs font-bold'>
-                    PREMIUM SELECTION
-                  </span>
-
-                  <div className='flex items-center gap-1'>
-                    <StarIcon className='fill-green-006a61 h-4 w-4' />
-                    <span className='text-black-191c1e text-sm font-bold'>
-                      5.0
-                    </span>
-                    <span className='text-gray-76777D text-sm font-medium'>
-                      (42)
-                    </span>
-                  </div>
-                </div>
-
-                <h2 className='font-semibold text-black'>
-                  The Royal Amstel Suites
-                </h2>
-                <span className='text-black-45464d'>
-                  Oud-Zuid, Amsterdam • Near Museums
-                </span>
-                <div className='my-4 flex flex-wrap gap-2'>
-                  <span className='bg-gray-e6e8eA text-black-191c1e rounded-full px-3 py-1 text-xs font-semibold text-nowrap'>
-                    Pool & Spa
-                  </span>
-                  <span className='bg-gray-e6e8eA text-black-191c1e rounded-full px-3 py-1 text-xs font-semibold text-nowrap'>
-                    Concierge
-                  </span>
-                  <span className='bg-gray-e6e8eA text-black-191c1e rounded-full px-3 py-1 text-xs font-semibold text-nowrap'>
-                    Room Service
-                  </span>
-                </div>
-
-                <div className='mt-auto flex items-end justify-between'>
-                  <span className='text-black'>
-                    $420
-                    <span className='text-gray-76777D text-sm font-medium'>
-                      {' '}
-                      / night
-                    </span>
-                  </span>
-                  <Button
-                    variant='roundedFill'
-                    className='bg-green-006a61 h-12 !rounded-[16px] px-6'
-                  >
-                    <span className='text-white'>View Property</span>
-                  </Button>
-                </div>
-              </div>
-            </div>
-          </div>
+          )}
         </section>
       </div>
     </main>

@@ -1,27 +1,66 @@
-"use server";
+'use server';
 
-import { revalidatePath } from "next/cache";
-import { prisma } from "@/lib/prisma";
-import { getOrCreateDbUser } from "@/lib/auth";
+import { revalidatePath } from 'next/cache';
+import { prisma } from '@/lib/prisma';
+import { getOrCreateDbUser } from '@/lib/auth';
+import { getStripe } from '@/lib/stripe';
 
-export async function cancelBooking(bookingId: string): Promise<void> {
-    const user = await getOrCreateDbUser();
-    if (!user) return;
+export type CancelBookingState = { error: string | null };
 
-    const booking = await prisma.booking.findUnique({
-        where: { id: bookingId },
-        select: { id: true, userId: true, status: true, startsAt: true, serviceId: true },
-    });
+export async function cancelBooking(
+  bookingId: string,
+  _prev: CancelBookingState,
+  _formData: FormData,
+): Promise<CancelBookingState> {
+  const user = await getOrCreateDbUser();
+  if (!user) return { error: 'Please sign in.' };
 
-    if (!booking || booking.userId !== user.id) return;
-    if (booking.status !== "CONFIRMED") return;
-    if (booking.startsAt.getTime() <= Date.now()) return;
+  const booking = await prisma.roomBooking.findUnique({
+    where: { id: bookingId },
+  });
+  if (!booking) return { error: 'Booking not found.' };
+  if (booking.userId !== user.id) {
+    return { error: 'You can only cancel your own bookings.' };
+  }
+  if (booking.status !== 'CONFIRMED') {
+    return { error: 'Only confirmed bookings can be cancelled.' };
+  }
+  if (booking.checkIn <= new Date()) {
+    return { error: 'Cannot cancel a trip that has already started.' };
+  }
 
-    await prisma.booking.update({
-        where: { id: booking.id },
-        data: { status: "CANCELLED" },
-    });
+  if (booking.stripeSessionId) {
+    try {
+      const session = await getStripe().checkout.sessions.retrieve(
+        booking.stripeSessionId,
+      );
+      if (typeof session.payment_intent === 'string') {
+        await getStripe().refunds.create(
+          { payment_intent: session.payment_intent },
+          { idempotencyKey: `refund-${bookingId}` },
+        );
+      }
+    } catch (e) {
+      console.error('Refund failed for booking', bookingId, e);
+      return {
+        error:
+          'Refund could not be processed. Please try again or contact support.',
+      };
+    }
+  } else {
+    console.warn('Cancelling booking without stripeSessionId', bookingId);
+  }
 
-    revalidatePath("/dashboard");
-    revalidatePath(`/services/${booking.serviceId}`);
+  const result = await prisma.roomBooking.updateMany({
+    where: { id: bookingId, status: 'CONFIRMED' },
+    data: { status: 'CANCELLED' },
+  });
+
+  if (result.count === 0) {
+    return { error: 'Booking is no longer in a cancellable state.' };
+  }
+
+  revalidatePath('/dashboard');
+  revalidatePath(`/rooms/${booking.roomId}`);
+  return { error: null };
 }

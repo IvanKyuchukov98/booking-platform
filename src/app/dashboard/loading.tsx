@@ -1,34 +1,36 @@
-export default function DashboardLoading() {
-    return (
-        <main className="mx-auto max-w-[1200px] px-4 py-6">
-            <div className="bg-white border border-gray-c2c6d6 rounded-lg mb-6 p-6 flex items-start justify-between gap-4">
-                <div className="space-y-2">
-                    <div className="h-8 w-64 animate-pulse rounded bg-white-e8e8e8" />
-                    <div className="h-4 w-40 animate-pulse rounded bg-white-e8e8e8" />
+export default function Loading() {
+  return (
+    <main className='bg-gray-eceef0 flex flex-1 animate-pulse'>
+      <div className='mx-auto flex w-full max-w-[1280px] flex-1'>
+        <aside className='flex w-80 flex-col gap-3 bg-white p-6'>
+          {[0, 1, 2, 3].map((i) => (
+            <div key={i} className='h-11 rounded-[12px] bg-gray-eceef0' />
+          ))}
+          <div className='border-gray-e6e8eA mt-5 h-28 rounded-[16px] border bg-white' />
+        </aside>
+        <section className='flex w-full flex-col p-6'>
+          <div className='h-10 w-72 rounded bg-white' />
+          <div className='mt-2 h-5 w-96 rounded bg-white' />
+          <div className='mt-8 h-8 w-48 rounded bg-white' />
+          <div className='mt-6 grid grid-cols-2 gap-6'>
+            {[0, 1].map((i) => (
+              <div
+                key={i}
+                className='flex max-w-[600px] flex-col overflow-hidden rounded-[24px] bg-white'
+              >
+                <div className='bg-gray-eceef0 aspect-square' />
+                <div className='flex flex-col gap-3 p-6'>
+                  <div className='h-4 w-32 rounded bg-gray-eceef0' />
+                  <div className='h-7 w-3/4 rounded bg-gray-eceef0' />
+                  <div className='h-4 w-1/2 rounded bg-gray-eceef0' />
+                  <div className='bg-gray-eceef0 mt-2 h-16 rounded-[16px]' />
+                  <div className='bg-gray-eceef0 mt-2 h-12 rounded-[16px]' />
                 </div>
-                <div className="flex gap-2">
-                    <div className="h-9 w-32 animate-pulse rounded-md bg-white-e8e8e8" />
-                </div>
-            </div>
-            <div className="bg-white border border-gray-c2c6d6 rounded-lg overflow-hidden">
-                <div className="bg-white-f3f3f3 border-b border-gray-c2c6d6 px-6 py-3">
-                    <div className="h-5 w-24 animate-pulse rounded bg-white-e8e8e8" />
-                </div>
-                <div className="divide-y divide-gray-c2c6d6">
-                    {[0, 1, 2].map((i) => (
-                        <div
-                            key={i}
-                            className="flex items-center justify-between gap-4 px-6 py-4"
-                        >
-                            <div className="space-y-1">
-                                <div className="h-4 w-48 animate-pulse rounded bg-white-e8e8e8" />
-                                <div className="h-3 w-32 animate-pulse rounded bg-white-e8e8e8" />
-                            </div>
-                            <div className="h-7 w-20 animate-pulse rounded-md bg-white-e8e8e8" />
-                        </div>
-                    ))}
-                </div>
-            </div>
-        </main>
-    );
+              </div>
+            ))}
+          </div>
+        </section>
+      </div>
+    </main>
+  );
 }

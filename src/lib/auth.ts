@@ -1,8 +1,9 @@
 import { auth, currentUser } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
+import { cache } from "react";
 import { prisma } from "./prisma";
 
-export async function getOrCreateDbUser() {
+export const getOrCreateDbUser = cache(async () => {
     const { userId } = await auth();
     if (!userId) return null;
 
@@ -20,7 +21,7 @@ export async function getOrCreateDbUser() {
         update: { email, name },
         create: { clerkId: userId, email, name },
     });
-}
+});
 
 export async function requireAdmin() {
     const user = await getOrCreateDbUser();

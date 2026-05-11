@@ -56,6 +56,18 @@ export function CheckboxGroup({
 }: CheckboxGroupProps) {
   const isControlled = value !== undefined;
   const [internal, setInternal] = useState<string[]>(defaultValue);
+
+  // Resync internal state when `defaultValue` changes between renders (e.g. after
+  // browser back/forward where the prop arrives from the URL). Canonical React
+  // pattern for "reset state when a prop changes": derive a key, compare to the
+  // previous key during render, and call setState if they differ.
+  const defaultKey = defaultValue.join('|');
+  const [prevDefaultKey, setPrevDefaultKey] = useState(defaultKey);
+  if (!isControlled && defaultKey !== prevDefaultKey) {
+    setPrevDefaultKey(defaultKey);
+    setInternal(defaultValue);
+  }
+
   const selected = isControlled ? value : internal;
   const v = variantClass[variant];
 

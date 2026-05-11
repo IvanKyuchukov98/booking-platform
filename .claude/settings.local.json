@@ -5,7 +5,15 @@
       "Bash(git -C C:/Users/urkqsrk/FEProjects/J/booking-platform log --all --oneline -- AGENTS.md CLAUDE.md)",
       "Bash(git -C C:/Users/urkqsrk/FEProjects/J/booking-platform/ blame AGENTS.md)",
       "Bash(npm install *)",
-      "Bash(npm run *)"
+      "Bash(npm run *)",
+      "Bash(Remove-Item -Recurse -Force src\\\\app\\\\services, src\\\\app\\\\admin, src\\\\lib\\\\slots.ts, src\\\\app\\\\dashboard\\\\actions.ts)",
+      "Bash(Write-Output \"deleted\")",
+      "Bash(npx prisma *)",
+      "Bash(PRISMA_USER_CONSENT_FOR_DANGEROUS_AI_ACTION=yes npx prisma *)",
+      "PowerShell(Get-Process *)",
+      "Bash(npx next *)",
+      "PowerShell(New-Item *)",
+      "Bash(npx tsx *)"
     ]
   }
 }

@@ -1,21 +1,50 @@
-import { Button } from '@/src/app/components/ui/Button';
+import { Button } from '@/app/components/ui/Button';
 import Image from 'next/image';
+import Link from 'next/link';
 import heroImage from '@/public/images/Hero.png';
 import uniquqImage from '@/public/images/unique.png';
 import beachFrontImage from '@/public/images/beachFront.png';
 import cabinsImage from '@/public/images/cabins.png';
 import urbanImage from '@/public/images/urban.png';
-import santoriniGreeceImage from '@/public/images/santoriniGreece.png';
-import tokyoJapanImage from '@/public/images/tokyoJapan.png';
-import modernistRetreatImage from '@/public/images/modernistRetreat.png';
-import theGlassFrameImage from '@/public/images/theGlassFrame.png';
-import romanSkylineImage from '@/public/images/romanSkyline.png';
-import { MagnifierIcon, ArrowRightIcon } from '@/src/app/components/icons';
-import { StarIcon } from '@/src/app/components/icons/StarIcon';
-import { HeartIcon } from '@/src/app/components/icons/HeartIcon';
-import { InputField } from '@/src/app/components/inputs/InputField';
+import { MagnifierIcon, ArrowRightIcon } from '@/app/components/icons';
+import { InputField } from '@/app/components/inputs/InputField';
+import { prisma } from '@/lib/prisma';
+import { formatPrice } from '@/lib/amenities';
+import { getOrCreateDbUser } from '@/lib/auth';
+import { TrendingCard } from '@/app/components/TrendingCard';
 
-export default function Home() {
+const TRENDING_DATE_HINTS = [
+  'Oct 22 – 27',
+  'Nov 05 – 10',
+  'Dec 12 – 17',
+  'Jan 10 – 15',
+];
+
+export default async function Home() {
+  const [topDestinations, trending, user] = await Promise.all([
+    prisma.room.findMany({
+      where: { isActive: true },
+      orderBy: { createdAt: 'asc' },
+      take: 3,
+    }),
+    prisma.room.findMany({
+      where: { isActive: true },
+      orderBy: { createdAt: 'desc' },
+      take: 4,
+    }),
+    getOrCreateDbUser(),
+  ]);
+
+  const favoriteIds = user
+    ? new Set(
+        (
+          await prisma.favorite.findMany({
+            where: { userId: user.id },
+            select: { roomId: true },
+          })
+        ).map((f) => f.roomId),
+      )
+    : new Set<string>();
   return (
     <main className='mx-auto mb-12 w-full'>
       <section className='mx-auto'>
@@ -35,15 +64,23 @@ export default function Home() {
               Discover curated stays from minimalist urban lofts to secluded
               coastal retreats.
             </p>
-            <div className='mx-auto flex w-full max-w-[400px] items-center rounded-full bg-white p-2'>
+            <form
+              action='/rooms'
+              method='get'
+              className='mx-auto flex w-full max-w-[400px] items-center rounded-full bg-white p-2'
+            >
               <input
+                name='q'
                 placeholder='Search for rooms'
                 className='text-gray-94a3b8 w-full pl-3 text-xl outline-none'
-              ></input>
-              <button className='bg-green-0d9488 flex cursor-pointer items-center justify-center rounded-full p-2'>
+              />
+              <button
+                type='submit'
+                className='bg-green-0d9488 flex cursor-pointer items-center justify-center rounded-full p-2'
+              >
                 <MagnifierIcon className='h-5 w-5 fill-white' />
               </button>
-            </div>
+            </form>
           </div>
         </div>
       </section>
@@ -107,83 +144,42 @@ export default function Home() {
             Handpicked locations for your next escape.
           </span>
           <div className='mt-8 grid grid-cols-3 gap-6'>
-            <div className='flex flex-col overflow-hidden rounded-[24px] bg-white'>
-              <Image
-                src={beachFrontImage}
-                alt=''
-                className='max-h-60 object-cover'
-              />
-              <div className='flex h-full flex-col p-8'>
-                <h2 className='text-black-191c1e mb-2'>London, UK</h2>
-                <p className='text-black-45464d mb-4'>
-                  Experience the perfect blend of historical charm and modern
-                  sophistication.
-                </p>
-                <div className='mt-auto flex items-center justify-between'>
-                  <span className='text-green-006a61 font-bold'>
-                    $240
-                    <span className='text-black-45464d text-sm font-medium'>
-                      /night
+            {topDestinations.map((room) => (
+              <div
+                key={room.id}
+                className='flex flex-col overflow-hidden rounded-[24px] bg-white'
+              >
+                <Image
+                  src={room.imageUrl}
+                  alt={room.location}
+                  width={600}
+                  height={400}
+                  className='max-h-60 w-full object-cover'
+                />
+                <div className='flex h-full flex-col p-8'>
+                  <h2 className='text-black-191c1e mb-2'>{room.location}</h2>
+                  <p className='text-black-45464d mb-4'>
+                    {room.description}
+                  </p>
+                  <div className='mt-auto flex items-center justify-between'>
+                    <span className='text-green-006a61 font-bold'>
+                      {formatPrice(room.pricePerNight)}
+                      <span className='text-black-45464d text-sm font-medium'>
+                        /night
+                      </span>
                     </span>
-                  </span>
-                  <Button variant='roundedBorder' className='text-black-191c1e'>
-                    Explore
-                  </Button>
+                    <Link href={`/rooms/${room.id}`}>
+                      <Button
+                        variant='roundedBorder'
+                        className='text-black-191c1e'
+                      >
+                        Explore
+                      </Button>
+                    </Link>
+                  </div>
                 </div>
               </div>
-            </div>
-
-            <div className='flex flex-col overflow-hidden rounded-[24px] bg-white'>
-              <Image
-                src={santoriniGreeceImage}
-                alt=''
-                className='max-h-60 object-cover'
-              />
-              <div className='flex h-full flex-col p-8'>
-                <h2 className='text-black-191c1e mb-2'>Santorini, Greece</h2>
-                <p className='text-black-45464d mb-4'>
-                  Iconic white-washed architecture and breathtaking sunset views
-                  over the caldera.
-                </p>
-                <div className='mt-auto flex items-center justify-between'>
-                  <span className='text-green-006a61 font-bold'>
-                    $450
-                    <span className='text-black-45464d text-sm font-medium'>
-                      /night
-                    </span>
-                  </span>
-                  <Button variant='roundedBorder' className='text-black-191c1e'>
-                    Explore
-                  </Button>
-                </div>
-              </div>
-            </div>
-
-            <div className='flex flex-col overflow-hidden rounded-[24px] bg-white'>
-              <Image
-                src={tokyoJapanImage}
-                alt=''
-                className='max-h-60 object-cover'
-              />
-              <div className='flex h-full flex-col p-8'>
-                <h2 className='text-black-191c1e mb-2'>Tokyo, Japan</h2>
-                <p className='text-black-45464d mb-4'>
-                  A futuristic metropolis offering world-class dining and
-                  vibrant nightlife.
-                </p>
-                <div className='mt-auto flex items-center justify-between'>
-                  <span className='text-green-006a61 font-bold'>
-                    $180
-                    <span className='text-black-45464d text-sm font-medium'>
-                      /night
-                    </span>
-                  </span>
-                  <Button variant='roundedBorder' className='text-black-191c1e'>
-                    Explore
-                  </Button>
-                </div>
-              </div>
-            </div>
+            ))}
           </div>
         </div>
       </section>
@@ -195,135 +191,16 @@ export default function Home() {
             Our most-loved stays this season.
           </span>
           <div className='mt-8 grid grid-cols-4 gap-6'>
-            <div className='relative flex flex-col'>
-              <Image
-                src={modernistRetreatImage}
-                alt=''
-                className='aspect-square rounded-[24px] object-cover'
+            {trending.map((room, i) => (
+              <TrendingCard
+                key={room.id}
+                room={room}
+                isFavorited={favoriteIds.has(room.id)}
+                dateHint={
+                  TRENDING_DATE_HINTS[i % TRENDING_DATE_HINTS.length]
+                }
               />
-              <button className='bg-gray-cfcfcf absolute top-4 right-4 cursor-pointer rounded-full p-1'>
-                <HeartIcon className='fill-black-0f172a h-6 w-6' />
-              </button>
-              <div className='mt-4 flex h-full justify-between gap-4'>
-                <div className='flex flex-col'>
-                  <h2 className='text-black-191c1e font-bold'>
-                    Modernist Desert Retreat
-                  </h2>
-                  <span className='text-black-45464d text-sm'>
-                    Joshua Tree, California
-                  </span>
-                  <span className='text-black-191c1e mb-2 text-sm font-medium'>
-                    Oct 22 – 27
-                  </span>
-                  <span className='text-black-191c1e mt-auto font-bold'>
-                    $382 <span className='font-normal'>night</span>
-                  </span>
-                </div>
-                <div className='mb-auto flex items-center gap-1'>
-                  <StarIcon className='fill-black-191c1e h-4 w-4' />
-                  <span className='text-black-191c1e text-sm font-semibold'>
-                    4.92
-                  </span>
-                </div>
-              </div>
-            </div>
-
-            <div className='relative flex flex-col'>
-              <Image
-                src={theGlassFrameImage}
-                alt=''
-                className='aspect-square rounded-[24px] object-cover'
-              />
-              <button className='bg-gray-cfcfcf absolute top-4 right-4 cursor-pointer rounded-full p-1'>
-                <HeartIcon className='fill-black-0f172a h-6 w-6' />
-              </button>
-              <div className='mt-4 flex h-full justify-between gap-4'>
-                <div className='flex flex-col'>
-                  <h2 className='text-black-191c1e font-bold'>
-                    The Glass A-Frame
-                  </h2>
-                  <span className='text-black-45464d text-sm'>
-                    Tofino, British Columbia
-                  </span>
-                  <span className='text-black-191c1e mb-2 text-sm font-medium'>
-                    Nov 05 – 10
-                  </span>
-                  <span className='text-black-191c1e mt-auto font-bold'>
-                    $215 <span className='font-normal'>night</span>
-                  </span>
-                </div>
-                <div className='mb-auto flex items-center gap-1'>
-                  <StarIcon className='fill-black-191c1e h-4 w-4' />
-                  <span className='text-black-191c1e text-sm font-semibold'>
-                    4.98
-                  </span>
-                </div>
-              </div>
-            </div>
-
-            <div className='relative flex flex-col'>
-              <Image
-                src={romanSkylineImage}
-                alt=''
-                className='aspect-square rounded-[24px] object-cover'
-              />
-              <button className='bg-gray-cfcfcf absolute top-4 right-4 cursor-pointer rounded-full p-1'>
-                <HeartIcon className='fill-black-0f172a h-6 w-6' />
-              </button>
-              <div className='mt-4 flex h-full justify-between gap-4'>
-                <div className='flex flex-col'>
-                  <h2 className='text-black-191c1e font-bold'>
-                    Roman Skyline Suite
-                  </h2>
-                  <span className='text-black-45464d text-sm'>Rome, Italy</span>
-                  <span className='text-black-191c1e mb-2 text-sm font-medium'>
-                    Dec 12 – 17
-                  </span>
-                  <span className='text-black-191c1e mt-auto font-bold'>
-                    $510 <span className='font-normal'>night</span>
-                  </span>
-                </div>
-                <div className='mb-auto flex items-center gap-1'>
-                  <StarIcon className='fill-black-191c1e h-4 w-4' />
-                  <span className='text-black-191c1e text-sm font-semibold'>
-                    4.85
-                  </span>
-                </div>
-              </div>
-            </div>
-
-            <div className='relative flex flex-col'>
-              <Image
-                src={uniquqImage}
-                alt=''
-                className='aspect-square rounded-[24px] object-cover'
-              />
-              <button className='bg-gray-cfcfcf absolute top-4 right-4 cursor-pointer rounded-full p-1'>
-                <HeartIcon className='fill-black-0f172a h-6 w-6' />
-              </button>
-              <div className='mt-4 flex h-full justify-between gap-4'>
-                <div className='flex flex-col'>
-                  <h2 className='text-black-191c1e font-bold'>
-                    Amazon Jungle Lodge
-                  </h2>
-                  <span className='text-black-45464d text-sm'>
-                    Iquitos, Peru
-                  </span>
-                  <span className='text-black-191c1e mb-2 text-sm font-medium'>
-                    Jan 10 – 15
-                  </span>
-                  <span className='text-black-191c1e mt-auto font-bold'>
-                    $125 <span className='font-normal'>night</span>
-                  </span>
-                </div>
-                <div className='mb-auto flex items-center gap-1'>
-                  <StarIcon className='fill-black-191c1e h-4 w-4' />
-                  <span className='text-black-191c1e text-sm font-semibold'>
-                    4.76
-                  </span>
-                </div>
-              </div>
-            </div>
+            ))}
           </div>
         </div>
       </section>
