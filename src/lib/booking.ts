@@ -12,6 +12,32 @@ export function addDays(isoDate: string, days: number): string {
   return d.toISOString().split('T')[0];
 }
 
+export function activeBookingCutoff(): Date {
+  return new Date(Date.now() - BOOKING_PENDING_EXPIRY_MINUTES * 60 * 1000);
+}
+
+export function isoDate(d: Date): string {
+  return new Date(
+    Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate()),
+  )
+    .toISOString()
+    .split('T')[0];
+}
+
+export function enumerateDates(
+  startIso: string,
+  endIsoExclusive: string,
+): string[] {
+  const out: string[] = [];
+  const end = new Date(`${endIsoExclusive}T00:00:00Z`).getTime();
+  const cursor = new Date(`${startIso}T00:00:00Z`);
+  while (cursor.getTime() < end) {
+    out.push(cursor.toISOString().split('T')[0]);
+    cursor.setUTCDate(cursor.getUTCDate() + 1);
+  }
+  return out;
+}
+
 export function computeNights(checkIn: string, checkOut: string): number {
   const a = new Date(`${checkIn}T00:00:00Z`).getTime();
   const b = new Date(`${checkOut}T00:00:00Z`).getTime();

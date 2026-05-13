@@ -13,7 +13,9 @@
       "PowerShell(Get-Process *)",
       "Bash(npx next *)",
       "PowerShell(New-Item *)",
-      "Bash(npx tsx *)"
+      "Bash(npx tsx *)",
+      "Bash(npx tsc *)",
+      "Bash(npx eslint *)"
     ]
   }
 }

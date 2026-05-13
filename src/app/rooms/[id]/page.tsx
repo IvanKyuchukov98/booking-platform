@@ -11,7 +11,13 @@ import { CalendarIcon } from '@/app/components/icons/CalendarIcon';
 import { ChevronRightIcon } from '@/app/components/icons/ChevronRightIcon';
 import { prisma } from '@/lib/prisma';
 import { AMENITIES } from '@/lib/amenities';
-import { addDays, todayIsoDate } from '@/lib/booking';
+import {
+  activeBookingCutoff,
+  addDays,
+  enumerateDates,
+  isoDate,
+  todayIsoDate,
+} from '@/lib/booking';
 import { getOrCreateDbUser } from '@/lib/auth';
 import { FavoriteToggle } from '@/app/favorites/FavoriteToggle';
 import { BookingForm } from './BookingForm';
@@ -50,8 +56,40 @@ export default async function RoomDetail({ params }: Props) {
       }))
     : false;
 
-  const initialCheckIn = todayIsoDate();
-  const initialCheckOut = addDays(initialCheckIn, 7);
+  const todayIso = todayIsoDate();
+  const expiredBefore = activeBookingCutoff();
+  const today = new Date(`${todayIso}T00:00:00Z`);
+  const activeBookings = await prisma.roomBooking.findMany({
+    where: {
+      roomId: room.id,
+      checkOut: { gt: today },
+      OR: [
+        { status: 'CONFIRMED' },
+        { status: 'PENDING', createdAt: { gte: expiredBefore } },
+      ],
+    },
+    select: { checkIn: true, checkOut: true },
+  });
+  const reservedDates = Array.from(
+    new Set(
+      activeBookings.flatMap((b) =>
+        enumerateDates(isoDate(b.checkIn), isoDate(b.checkOut)),
+      ),
+    ),
+  );
+  const reservedSet = new Set(reservedDates);
+
+  let initialCheckIn = todayIso;
+  for (let i = 0; i < 365 && reservedSet.has(initialCheckIn); i++) {
+    initialCheckIn = addDays(initialCheckIn, 1);
+  }
+  const nextReservedAfterCheckIn = [...reservedDates]
+    .sort()
+    .find((d) => d > initialCheckIn);
+  let initialCheckOut = addDays(initialCheckIn, 7);
+  if (nextReservedAfterCheckIn && initialCheckOut > nextReservedAfterCheckIn) {
+    initialCheckOut = nextReservedAfterCheckIn;
+  }
 
   return (
     <main className='mx-auto mb-12 w-full'>
@@ -241,8 +279,10 @@ export default async function RoomDetail({ params }: Props) {
             roomId={room.id}
             pricePerNight={room.pricePerNight}
             maxGuests={room.maxGuests}
+            today={todayIso}
             initialCheckIn={initialCheckIn}
             initialCheckOut={initialCheckOut}
+            reservedDates={reservedDates}
           />
         </div>
       </div>
