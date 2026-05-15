@@ -55,6 +55,10 @@
 
     /* Shadows */
     --shadow-ambient: 0 10px 30px rgb(0 0 0 / 0.04);
+
+    /* Break points */
+    --breakpoint-xs: 400px;
+    --breakpoint-ssm: 500px;
 }
 
 body {

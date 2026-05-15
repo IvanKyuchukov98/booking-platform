@@ -73,9 +73,9 @@ export default async function RoomDetail({ params }: Props) {
   const reservedDates = Array.from(
     new Set(
       activeBookings.flatMap((b) =>
-        enumerateDates(isoDate(b.checkIn), isoDate(b.checkOut)),
-      ),
-    ),
+        enumerateDates(isoDate(b.checkIn), isoDate(b.checkOut))
+      )
+    )
   );
   const reservedSet = new Set(reservedDates);
 
@@ -154,7 +154,7 @@ export default async function RoomDetail({ params }: Props) {
         <div className='mx-auto flex max-w-[1280px] gap-15'>
           <section className='flex gap-2'>
             <div className='flex w-full flex-col'>
-              <div className='border-gray-cfcfcf flex items-center justify-between border-b pb-8'>
+              <div className='border-gray-cfcfcf flex flex-col-reverse items-center justify-between border-b pb-8 md:flex-row'>
                 <div className='flex flex-col gap-1'>
                   <h2 className='text-black-191c1e text-2xl font-semibold'>
                     Entire stay hosted by Eleni

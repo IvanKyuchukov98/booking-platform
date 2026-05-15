@@ -42,13 +42,13 @@ export default async function Home() {
             where: { userId: user.id },
             select: { roomId: true },
           })
-        ).map((f) => f.roomId),
+        ).map((f) => f.roomId)
       )
     : new Set<string>();
   return (
     <main className='mx-auto mb-12 w-full'>
       <section className='mx-auto'>
-        <div className='relative aspect-[1280/570] h-full w-full'>
+        <div className='ssm:aspect-[1280/800] relative aspect-[1/1] h-full w-full sm:aspect-[1280/570]'>
           <Image
             src={heroImage}
             alt=''
@@ -57,10 +57,10 @@ export default async function Home() {
           />
           <div className='absolute h-full w-full bg-black opacity-30'></div>
           <div className='absolute top-1/2 left-1/2 flex w-full -translate-1/2 flex-col gap-4 px-10'>
-            <h1 className='text-center text-[32px] leading-[40px] font-bold text-white'>
+            <h1 className='ssm:text-[32px] text-center text-2xl font-bold text-white'>
               Find your sanctuary, anywhere.
             </h1>
-            <p className='text-center text-2xl leading-[32px] font-medium text-white'>
+            <p className='ssm:text-2xl text-center text-lg font-medium text-white'>
               Discover curated stays from minimalist urban lofts to secluded
               coastal retreats.
             </p>
@@ -84,7 +84,7 @@ export default async function Home() {
           </div>
         </div>
       </section>
-      <section className='mt-20 px-6'>
+      <section className='mt-10 px-6 md:mt-20'>
         <div className='mx-auto flex max-w-[1280px] flex-col gap-2'>
           <span className='text-black-191c1e'>Unique Categories</span>
           <div className='flex items-center justify-between gap-5'>
@@ -99,7 +99,7 @@ export default async function Home() {
             </button>
           </div>
 
-          <div className='mt-8 grid grid-cols-4 gap-6'>
+          <div className='xs:grid-cols-2 mt-4 grid gap-6 md:mt-8 md:grid-cols-4'>
             <div className='relative aspect-[290/362] w-full overflow-hidden rounded-[24px]'>
               <Image
                 src={beachFrontImage}
@@ -138,12 +138,12 @@ export default async function Home() {
       </section>
 
       <section className='bg-gray-eceef0 px-6'>
-        <div className='mx-auto mt-20 flex max-w-[1280px] flex-col gap-2 py-20'>
+        <div className='mx-auto mt-10 flex max-w-[1280px] flex-col gap-2 py-10 md:mt-20 md:py-20'>
           <span className='text-black-191c1e'>Top Destinations</span>
           <span className='text-black-45464d'>
             Handpicked locations for your next escape.
           </span>
-          <div className='mt-8 grid grid-cols-3 gap-6'>
+          <div className='mt-4 grid gap-6 sm:grid-cols-2 md:mt-8 lg:grid-cols-3'>
             {topDestinations.map((room) => (
               <div
                 key={room.id}
@@ -158,10 +158,8 @@ export default async function Home() {
                 />
                 <div className='flex h-full flex-col p-8'>
                   <h2 className='text-black-191c1e mb-2'>{room.location}</h2>
-                  <p className='text-black-45464d mb-4'>
-                    {room.description}
-                  </p>
-                  <div className='mt-auto flex items-center justify-between'>
+                  <p className='text-black-45464d mb-4'>{room.description}</p>
+                  <div className='mt-auto flex items-center justify-between gap-4'>
                     <span className='text-green-006a61 font-bold'>
                       {formatPrice(room.pricePerNight)}
                       <span className='text-black-45464d text-sm font-medium'>
@@ -185,40 +183,41 @@ export default async function Home() {
       </section>
 
       <section className='px-6'>
-        <div className='mx-auto flex max-w-[1280px] flex-col gap-2 py-20'>
+        <div className='mx-auto flex max-w-[1280px] flex-col gap-2 py-10 md:py-20'>
           <span className='text-black-191c1e'>Trending Now</span>
           <span className='text-black-45464d'>
             Our most-loved stays this season.
           </span>
-          <div className='mt-8 grid grid-cols-4 gap-6'>
+          <div className='xs:grid-cols-2 mt-4 grid gap-6 md:mt-8 md:grid-cols-4'>
             {trending.map((room, i) => (
               <TrendingCard
                 key={room.id}
                 room={room}
                 isFavorited={favoriteIds.has(room.id)}
-                dateHint={
-                  TRENDING_DATE_HINTS[i % TRENDING_DATE_HINTS.length]
-                }
+                dateHint={TRENDING_DATE_HINTS[i % TRENDING_DATE_HINTS.length]}
               />
             ))}
           </div>
         </div>
       </section>
       <section className='px-6'>
-        <div className='bg-black-131b2e mx-auto flex max-w-[1280px] flex-col items-center gap-6 rounded-[24px] py-20 text-center'>
+        <div className='bg-black-131b2e mx-auto flex max-w-[1280px] flex-col items-center gap-6 rounded-[24px] py-10 text-center md:py-20'>
           <h3 className='text-white'>Join the global community.</h3>
           <p className='text-gray-bec6e0 mx-auto max-w-[640px] px-5'>
             Get curated travel guides, exclusive early-access stays, and
             professional hosting tips directly in your inbox.
           </p>
-          <div className='flex w-full items-center justify-center gap-4 px-5'>
+          <div className='flex w-full flex-col items-center justify-center gap-4 px-5 sm:flex-row'>
             <InputField
               variant='dark'
               className='!h-15 w-full'
               containerClassName='w-full max-w-[300px]'
               placeholder='Your email address'
             ></InputField>
-            <Button variant='roundedFill' className='bg-green-86f2e4 h-15 px-8'>
+            <Button
+              variant='roundedFill'
+              className='bg-green-86f2e4 h-15 w-full max-w-[300px] px-8 sm:w-fit'
+            >
               <span className='text-green-006f66 font-bold'>Join Now</span>
             </Button>
           </div>
