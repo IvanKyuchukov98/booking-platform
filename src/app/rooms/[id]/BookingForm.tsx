@@ -61,24 +61,21 @@ export function BookingForm({
   const reservedSet = useMemo(() => new Set(reservedDates), [reservedDates]);
   const sortedReserved = useMemo(
     () => [...reservedDates].sort(),
-    [reservedDates],
+    [reservedDates]
   );
 
   const [checkIn, setCheckIn] = useState(initialCheckIn);
   const [checkOut, setCheckOut] = useState(initialCheckOut);
   const [guests, setGuests] = useState(2 > maxGuests ? 1 : 2);
-  const [openPicker, setOpenPicker] = useState<
-    'in' | 'out' | 'guests' | null
-  >(null);
+  const [openPicker, setOpenPicker] = useState<'in' | 'out' | 'guests' | null>(
+    null
+  );
   const pickerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (!openPicker) return;
     function onDown(e: MouseEvent) {
-      if (
-        pickerRef.current &&
-        !pickerRef.current.contains(e.target as Node)
-      ) {
+      if (pickerRef.current && !pickerRef.current.contains(e.target as Node)) {
         setOpenPicker(null);
       }
     }
@@ -88,12 +85,12 @@ export function BookingForm({
 
   const [state, formAction] = useActionState<BookingState, FormData>(
     createBooking,
-    { error: null },
+    { error: null }
   );
 
   const nights = useMemo(
     () => computeNights(checkIn, checkOut),
-    [checkIn, checkOut],
+    [checkIn, checkOut]
   );
   const subtotalCents = nights * pricePerNight;
   const totalCents = computeTotalCents(pricePerNight, nights);
@@ -128,18 +125,18 @@ export function BookingForm({
   return (
     <form
       action={formAction}
-      className='border-gray-cfcfcf flex h-fit w-[380px] shrink-0 flex-col rounded-[16px] border bg-white p-6'
+      className='border-gray-cfcfcf flex h-fit w-full flex-col rounded-[16px] border bg-white p-6 md:w-[380px] md:shrink-0'
     >
       <input type='hidden' name='roomId' value={roomId} />
       <input type='hidden' name='checkIn' value={checkIn} />
       <input type='hidden' name='checkOut' value={checkOut} />
 
-      <div className='flex items-center justify-between'>
+      <div className='ssm:flex-row ssm:items-center flex flex-col justify-between gap-2'>
         <div className='flex items-end gap-1'>
           <span className='text-black-191c1e text-2xl font-bold'>
             {formatPrice(pricePerNight)}
           </span>
-          <span className='text-black-45464d mb-0.5'>/ night</span>
+          <span className='text-black-45464d mb-0.5 text-nowrap'>/ night</span>
         </div>
         <div className='flex items-center gap-1'>
           <StarIcon className='fill-green-0d9488 h-4 w-4' />

@@ -15,7 +15,8 @@
       "PowerShell(New-Item *)",
       "Bash(npx tsx *)",
       "Bash(npx tsc *)",
-      "Bash(npx eslint *)"
+      "Bash(npx eslint *)",
+      "Bash(echo \"exit=$?\")"
     ]
   }
 }

@@ -17,8 +17,8 @@ export function RoomCard({ room, isFavorited }: Props) {
     .map((slug) => AMENITIES[slug]?.short ?? slug);
 
   return (
-    <div className='flex overflow-hidden rounded-[16px] bg-white'>
-      <div className='relative w-full max-w-60 shrink-0 self-stretch'>
+    <div className='llg:flex-row flex flex-col overflow-hidden rounded-[16px] bg-white'>
+      <div className='llg:max-w-60 llg:aspect-auto llg:h-full relative aspect-[4/3] max-h-[300px] w-full shrink-0 self-stretch'>
         <Image
           src={room.imageUrl}
           alt={room.name}

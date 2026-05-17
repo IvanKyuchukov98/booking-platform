@@ -26,7 +26,7 @@ export default async function FavoritesPage() {
   if (!user) {
     return (
       <main className='bg-gray-eceef0 flex flex-1'>
-        <div className='mx-auto flex w-full max-w-[1280px] flex-1'>
+        <div className='mx-auto flex w-full max-w-[1280px] flex-1 flex-col sm:flex-row'>
           <Sidebar activeKey='favorites' />
           <section className='flex w-full flex-col items-center justify-center p-6'>
             <EmptyState
@@ -50,7 +50,7 @@ export default async function FavoritesPage() {
 
   return (
     <main className='bg-gray-eceef0 flex flex-1'>
-      <div className='mx-auto flex w-full max-w-[1280px] flex-1'>
+      <div className='mx-auto flex w-full max-w-[1280px] flex-1 flex-col sm:flex-row'>
         <Sidebar activeKey='favorites' />
 
         <section className='flex w-full flex-col p-6'>
@@ -65,7 +65,7 @@ export default async function FavoritesPage() {
 
           {favorites.length > 0 ? (
             <>
-              <div className='mt-8 flex items-center justify-between'>
+              <div className='ssm:flex-row ssm:items-center ssm:gap-0 mt-8 flex flex-col justify-between gap-2'>
                 <h2 className='text-black-191c1e text-2xl font-semibold'>
                   Your Favorites
                 </h2>
@@ -82,14 +82,14 @@ export default async function FavoritesPage() {
                 />
               </div>
 
-              <div className='mt-6 grid grid-cols-3 gap-6'>
+              <div className='llg:grid-cols-2 mt-6 grid gap-6 xl:grid-cols-3'>
                 {favorites.map((fav) => (
                   <div key={fav.id} className='relative flex flex-col'>
                     <Image
                       src={fav.room.imageUrl}
                       alt={fav.room.name}
-                      width={400}
-                      height={400}
+                      width={600}
+                      height={600}
                       className='aspect-square rounded-[24px] object-cover'
                     />
                     <FavoriteToggle
@@ -123,10 +123,7 @@ export default async function FavoritesPage() {
                       </div>
                     </div>
                     <div className='mt-4 flex gap-2'>
-                      <Link
-                        href={`/rooms/${fav.roomId}`}
-                        className='flex-1'
-                      >
+                      <Link href={`/rooms/${fav.roomId}`} className='flex-1'>
                         <Button
                           variant='roundedFill'
                           className='bg-green-006a61 h-11 w-full !rounded-[16px] px-4'

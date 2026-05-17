@@ -95,19 +95,19 @@ export default async function RoomDetail({ params }: Props) {
     <main className='mx-auto mb-12 w-full'>
       <section className='mt-8 px-6'>
         <div className='mx-auto flex max-w-[1280px] flex-col gap-2'>
-          <h1 className='text-black-191c1e text-[48px] font-bold'>
+          <h1 className='text-black-191c1e text-3xl font-bold md:text-[48px]'>
             {room.name}
           </h1>
-          <div className='flex items-center justify-between'>
+          <div className='flex flex-col gap-3 md:flex-row md:items-center md:justify-between'>
             <div className='flex items-center gap-1'>
               <StarIcon className='fill-green-0d9488 h-5 w-5' />
-              <div className='text-black-45464d flex items-center gap-4'>
+              <div className='text-black-45464d flex flex-wrap items-center gap-x-3 gap-y-1 md:gap-4'>
                 <span>4.98 · 124 reviews </span>
-                <span>·</span>
+                <span className='hidden md:inline'>·</span>
                 <span className='font-semibold underline'>{room.location}</span>
               </div>
             </div>
-            <div className='fill-black-191c1e text-black-191c1e flex items-center gap-8'>
+            <div className='fill-black-191c1e text-black-191c1e flex items-center gap-4 md:gap-8'>
               <div className='flex items-center gap-2'>
                 <ShareIcon className='h-5 w-5' />
                 <span>Share</span>
@@ -122,18 +122,18 @@ export default async function RoomDetail({ params }: Props) {
             </div>
           </div>
 
-          <div className='mt-4 grid grid-cols-2 gap-3 overflow-hidden rounded-[12px]'>
+          <div className='mt-4 grid grid-cols-1 gap-3 overflow-hidden rounded-[12px] md:grid-cols-2'>
             <div className='relative aspect-[4/3]'>
               <Image
                 src={room.imageUrl}
                 alt={room.name}
                 fill
-                sizes='50vw'
+                sizes='(min-width: 768px) 50vw, 100vw'
                 className='object-cover'
                 priority
               />
             </div>
-            <div className='grid grid-cols-2 gap-3'>
+            <div className='hidden grid-cols-2 gap-3 md:grid'>
               {[0, 1, 2, 3].map((i) => (
                 <div key={i} className='relative aspect-[4/3]'>
                   <Image
@@ -150,11 +150,11 @@ export default async function RoomDetail({ params }: Props) {
         </div>
       </section>
 
-      <div className='mt-20 px-6'>
-        <div className='mx-auto flex max-w-[1280px] gap-15'>
+      <div className='mt-10 px-6 md:mt-20'>
+        <div className='mx-auto flex max-w-[1280px] flex-col gap-10 md:flex-row md:gap-15 lg:gap-10 xl:gap-15'>
           <section className='flex gap-2'>
             <div className='flex w-full flex-col'>
-              <div className='border-gray-cfcfcf flex flex-col-reverse items-center justify-between border-b pb-8 md:flex-row'>
+              <div className='border-gray-cfcfcf flex flex-col-reverse items-center justify-between gap-5 border-b pb-8 md:flex-row'>
                 <div className='flex flex-col gap-1'>
                   <h2 className='text-black-191c1e text-2xl font-semibold'>
                     Entire stay hosted by Eleni
@@ -226,52 +226,6 @@ export default async function RoomDetail({ params }: Props) {
                   })}
                 </div>
               </div>
-
-              <div className='mt-8 flex flex-col'>
-                <div className='flex items-center gap-2'>
-                  <StarIcon className='fill-green-0d9488 h-5 w-5' />
-                  <span className='text-black-191c1e text-2xl font-semibold'>
-                    4.98 · 124 reviews
-                  </span>
-                </div>
-
-                <div className='mt-8 grid grid-cols-2 gap-8'>
-                  {[0, 1].map((i) => (
-                    <div
-                      key={i}
-                      className='flex flex-col gap-4 rounded-[12px] bg-white p-6'
-                    >
-                      <div className='flex items-center gap-3'>
-                        <Image
-                          src={avatarImage}
-                          alt=''
-                          className='h-10 w-10 rounded-full object-cover'
-                        />
-                        <div className='flex flex-col'>
-                          <span className='text-black-191c1e'>
-                            Sarah Jenkins
-                          </span>
-                          <span className='text-black-45464d text-xs'>
-                            October 2023
-                          </span>
-                        </div>
-                      </div>
-                      <p className='text-black-191c1e text-sm'>
-                        Absolutely magical. The views are even better than the
-                        photos. Eleni was an incredible host and helped us book
-                        private dinners. Highly…
-                      </p>
-                    </div>
-                  ))}
-                </div>
-
-                <Button
-                  variant='roundedBorder'
-                  className='!border-black-191c1e mt-6 w-fit !rounded-[8px] py-3'
-                >
-                  Show all reviews
-                </Button>
-              </div>
             </div>
           </section>
 
@@ -284,6 +238,51 @@ export default async function RoomDetail({ params }: Props) {
             initialCheckOut={initialCheckOut}
             reservedDates={reservedDates}
           />
+        </div>
+      </div>
+      <div className='px-6'>
+        <div className='mx-auto mt-8 flex max-w-[1280px] flex-col'>
+          <div className='flex items-center gap-2'>
+            <StarIcon className='fill-green-0d9488 h-5 w-5' />
+            <span className='text-black-191c1e text-2xl font-semibold'>
+              4.98 · 124 reviews
+            </span>
+          </div>
+
+          <div className='mt-8 grid grid-cols-1 gap-6 md:grid-cols-2 md:gap-8'>
+            {[0, 1].map((i) => (
+              <div
+                key={i}
+                className='flex flex-col gap-4 rounded-[12px] bg-white p-6'
+              >
+                <div className='flex items-center gap-3'>
+                  <Image
+                    src={avatarImage}
+                    alt=''
+                    className='h-10 w-10 rounded-full object-cover'
+                  />
+                  <div className='flex flex-col'>
+                    <span className='text-black-191c1e'>Sarah Jenkins</span>
+                    <span className='text-black-45464d text-xs'>
+                      October 2023
+                    </span>
+                  </div>
+                </div>
+                <p className='text-black-191c1e text-sm'>
+                  Absolutely magical. The views are even better than the photos.
+                  Eleni was an incredible host and helped us book private
+                  dinners. Highly…
+                </p>
+              </div>
+            ))}
+          </div>
+
+          <Button
+            variant='roundedBorder'
+            className='!border-black-191c1e mt-6 w-fit !rounded-[8px] py-3'
+          >
+            Show all reviews
+          </Button>
         </div>
       </div>
     </main>

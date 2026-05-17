@@ -1,12 +1,10 @@
-import { Button } from '@/app/components/ui/Button';
-import { InputField } from '@/app/components/inputs/InputField';
-import { CheckboxGroup } from '@/app/components/inputs/CheckboxGroup';
 import { prisma } from '@/lib/prisma';
 import { getOrCreateDbUser } from '@/lib/auth';
 import { EmptyState } from '@/app/components/EmptyState';
 import type { Metadata } from 'next';
 import { SortDropdown } from './SortDropdown';
 import { RoomCard } from './RoomCard';
+import { FiltersPanel } from './FiltersPanel';
 import type { Prisma } from '@prisma/client';
 
 export const metadata: Metadata = {
@@ -98,82 +96,15 @@ export default async function RoomsPage({ searchParams }: Props) {
 
   return (
     <main className='bg-gray-eceef0 flex flex-1'>
-      <div className='mx-auto flex w-full max-w-[1280px] flex-1'>
-        <form
-          action='/rooms'
-          method='get'
-          className='flex w-80 flex-col bg-white p-6'
-        >
-          <input type='hidden' name='sort' value={currentSort} />
-          <span className='text-black'>Filters</span>
-          <InputField
-            variant='light'
-            name='q'
-            type='text'
-            defaultValue={q ?? ''}
-            placeholder='Stay name or city'
-            className='!h-9 w-full !px-3'
-            label='Search'
-            labelClassName='text-xs'
-            inputClassName='!border-gray-c2c6d6 !rounded-[8px]'
-            containerClassName='mt-4 w-full'
-          />
-          <span className='text-black-45464d mt-4 mb-2'>Price range</span>
-          <div className='flex gap-1'>
-            <InputField
-              variant='light'
-              name='min'
-              type='number'
-              defaultValue={minCents !== undefined ? minCents / 100 : ''}
-              className='!h-9 w-full !px-3'
-              label='Min price'
-              labelClassName='text-xs'
-              inputClassName='!border-gray-c2c6d6 !rounded-[8px]'
-              containerClassName='w-full max-w-[300px] '
-            />
-            <InputField
-              variant='light'
-              name='max'
-              type='number'
-              defaultValue={maxCents !== undefined ? maxCents / 100 : ''}
-              className='!h-9 w-full !px-3'
-              label='Max price'
-              labelClassName='text-xs'
-              inputClassName='!border-gray-c2c6d6 !rounded-[8px]'
-              containerClassName='w-full max-w-[300px] '
-            />
-          </div>
-          <div className='bg-green-006a61 mt-4 mb-6 h-1 w-full rounded-full'></div>
-          <CheckboxGroup
-            label='Property type'
-            name='propertyType'
-            options={[
-              { value: 'hotels', label: 'Hotels' },
-              { value: 'apartments', label: 'Apartments' },
-              { value: 'villas', label: 'Villas' },
-              { value: 'resorts', label: 'Resorts' },
-            ]}
-            defaultValue={propertyTypesArr}
-          />
-          <CheckboxGroup
-            label='Amenities'
-            name='amenities'
-            containerClassName='mt-6'
-            options={[
-              { value: 'wifi', label: 'Free Wi-Fi' },
-              { value: 'pool', label: 'Swimming Pool' },
-              { value: 'kitchen', label: 'Full Kitchen' },
-              { value: 'parking', label: 'Parking' },
-            ]}
-            defaultValue={amenitiesArr}
-          />
-          <Button
-            variant='roundedFill'
-            className='mt-6 h-12 !rounded-[16px] bg-black px-6'
-          >
-            <span className='text-white'>Show Results</span>
-          </Button>
-        </form>
+      <div className='mx-auto flex w-full max-w-[1280px] flex-1 flex-col sm:flex-row'>
+        <FiltersPanel
+          q={q ?? ''}
+          minCents={minCents}
+          maxCents={maxCents}
+          amenitiesArr={amenitiesArr}
+          propertyTypesArr={propertyTypesArr}
+          currentSort={currentSort}
+        />
         <section className='flex w-full flex-col gap-8 p-6'>
           <div className='flex justify-between'>
             <div className='flex flex-col'>

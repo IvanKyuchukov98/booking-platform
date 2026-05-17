@@ -59,6 +59,7 @@
     /* Break points */
     --breakpoint-xs: 400px;
     --breakpoint-ssm: 500px;
+    --breakpoint-llg: 900px;
 }
 
 body {
