@@ -74,7 +74,7 @@ export function Sidebar({ activeKey }: { activeKey: SidebarActiveKey }) {
         role='dialog'
         aria-modal={open ? 'true' : undefined}
         aria-label='Account menu'
-        className={`fixed inset-y-0 left-0 z-50 flex w-80 max-w-[85vw] flex-col overflow-y-auto bg-white p-6 transition-transform duration-300 sm:static sm:max-w-none sm:translate-x-0 sm:transition-none ${
+        className={`fixed inset-y-0 left-0 z-50 flex w-80 max-w-[85vw] flex-col overflow-y-auto bg-white p-6 transition-transform duration-300 sm:static sm:my-6 sm:max-w-none sm:translate-x-0 sm:rounded-[24px] sm:transition-none ${
           open ? 'translate-x-0' : '-translate-x-full'
         }`}
       >

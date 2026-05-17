@@ -95,8 +95,8 @@ export default async function RoomsPage({ searchParams }: Props) {
     : new Set<string>();
 
   return (
-    <main className='bg-gray-eceef0 flex flex-1'>
-      <div className='mx-auto flex w-full max-w-[1280px] flex-1 flex-col sm:flex-row'>
+    <main className='bg-gray-eceef0 flex flex-1 px-6'>
+      <div className='mx-auto flex w-full max-w-[1280px] flex-1 flex-col gap-6 sm:flex-row'>
         <FiltersPanel
           q={q ?? ''}
           minCents={minCents}
@@ -105,7 +105,7 @@ export default async function RoomsPage({ searchParams }: Props) {
           propertyTypesArr={propertyTypesArr}
           currentSort={currentSort}
         />
-        <section className='flex w-full flex-col gap-8 p-6'>
+        <section className='mt-6 flex w-full flex-col gap-8'>
           <div className='flex justify-between'>
             <div className='flex flex-col'>
               <span className='text-gray-76777D text-sm font-medium'>
