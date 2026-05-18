@@ -2,7 +2,7 @@
 
 import { useActionState, useEffect, useMemo, useRef, useState } from 'react';
 import { useFormStatus } from 'react-dom';
-import { Button } from '@/app/components/ui/Button';
+import { Button } from '@/app/components/buttons/Button';
 import { StarIcon } from '@/app/components/icons/StarIcon';
 import { formatPrice } from '@/lib/amenities';
 import {
@@ -12,9 +12,9 @@ import {
   computeNights,
   computeTotalCents,
 } from '@/lib/booking';
-import { Calendar } from './Calendar';
-import { GuestsSelect } from './GuestsSelect';
-import { createBooking, type BookingState } from './actions';
+import { Calendar } from '../inputs/Calendar';
+import { GuestsSelect } from '../inputs/GuestsSelect';
+import { createBooking, type BookingState } from '../../rooms/[id]/actions';
 
 type Props = {
   roomId: string;
@@ -207,6 +207,13 @@ export function BookingForm({
             />
           </div>
         ) : null}
+      </div>
+      <div className='bg-pink-ffdad6 border-red-ba1a1a mt-6 rounded-[16px] border p-4'>
+        <p className='text-black-191c1e'>
+          Demo only — use test card{' '}
+          <span className='font-bold'>4242 4242 4242 4242</span>, any future
+          date, any CVC.
+        </p>
       </div>
       <ReserveButton />
 

@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { Button } from '@/app/components/ui/Button';
+import { Button } from '@/app/components/buttons/Button';
 
 type Props = {
   title: string;

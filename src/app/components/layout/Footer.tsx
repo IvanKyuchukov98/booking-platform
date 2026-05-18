@@ -10,14 +10,14 @@ export function Footer() {
         <div className='xs:grid-cols-2 mx-auto grid max-w-[1280px] gap-8 py-12 md:grid-cols-4'>
           <div className='flex flex-col gap-4'>
             <Link
-              href='/'
+              href='/public'
               className='text-white-1a1c1c text-xl leading-[28px] font-semibold tracking-tight'
             >
               BookSpace
             </Link>
             <p className='text-gray-64748b text-sm'>
-              Making high-end travel experiences accessible and effortless
-              since 2024.
+              Making high-end travel experiences accessible and effortless since
+              2024.
             </p>
           </div>
           <div className='flex flex-col gap-4'>

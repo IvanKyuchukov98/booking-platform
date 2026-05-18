@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { Button } from '@/app/components/ui/Button';
+import { Button } from '@/app/components/buttons/Button';
 import { HeartIcon } from '@/app/components/icons/HeartIcon';
 import { PlaneDepartureIcon } from '@/app/components/icons/PlaneDepartureIcon';
 import { GearIcon } from '@/app/components/icons/GearIcon';
@@ -11,7 +11,12 @@ import { CircleQUestionIcon } from '@/app/components/icons/CircleQuestionIcon';
 export type SidebarActiveKey = 'trips' | 'favorites' | 'settings' | 'support';
 
 const LINKS = [
-  { key: 'trips', href: '/dashboard', Icon: PlaneDepartureIcon, label: 'Trips' },
+  {
+    key: 'trips',
+    href: '/dashboard',
+    Icon: PlaneDepartureIcon,
+    label: 'Trips',
+  },
   {
     key: 'favorites',
     href: '/favorites',
@@ -79,7 +84,7 @@ export function Sidebar({ activeKey }: { activeKey: SidebarActiveKey }) {
         }`}
       >
         <div className='flex items-center justify-between sm:hidden'>
-          <span className='text-black font-semibold'>Menu</span>
+          <span className='font-semibold text-black'>Menu</span>
           <button
             type='button'
             onClick={() => setOpen(false)}

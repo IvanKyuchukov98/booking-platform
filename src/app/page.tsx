@@ -1,4 +1,4 @@
-import { Button } from '@/app/components/ui/Button';
+import { Button } from '@/app/components/buttons/Button';
 import Image from 'next/image';
 import Link from 'next/link';
 import heroImage from '@/public/images/Hero.png';
@@ -11,7 +11,7 @@ import { InputField } from '@/app/components/inputs/InputField';
 import { prisma } from '@/lib/prisma';
 import { formatPrice } from '@/lib/amenities';
 import { getOrCreateDbUser } from '@/lib/auth';
-import { TrendingCard } from '@/app/components/TrendingCard';
+import { TrendingCard } from '@/app/components/cards/TrendingCard';
 
 const TRENDING_DATE_HINTS = [
   'Oct 22 – 27',

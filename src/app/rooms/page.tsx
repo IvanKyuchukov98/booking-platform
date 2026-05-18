@@ -1,10 +1,10 @@
 import { prisma } from '@/lib/prisma';
 import { getOrCreateDbUser } from '@/lib/auth';
-import { EmptyState } from '@/app/components/EmptyState';
+import { EmptyState } from '@/app/components/ui/EmptyState';
 import type { Metadata } from 'next';
-import { SortDropdown } from './SortDropdown';
-import { RoomCard } from './RoomCard';
-import { FiltersPanel } from './FiltersPanel';
+import { SortDropdown } from '../components/inputs/SortDropdown';
+import { RoomCard } from '../components/inputs/RoomCard';
+import { FiltersPanel } from '../components/forms/FiltersPanel';
 import type { Prisma } from '@prisma/client';
 
 export const metadata: Metadata = {

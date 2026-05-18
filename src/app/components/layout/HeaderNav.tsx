@@ -4,7 +4,7 @@ import { UserButton, useUser } from '@clerk/nextjs';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useState } from 'react';
-import { Button } from '@/app/components/ui/Button';
+import { Button } from '@/app/components/buttons/Button';
 import { clerkAppearance } from '@/lib/clerkAppearance';
 
 const ACTIVE_CLASS =
@@ -16,9 +16,7 @@ const MOBILE_INACTIVE_CLASS = 'text-gray-475569';
 
 function isActive(pathname: string, exact: string, prefixes: string[] = []) {
   if (pathname === exact) return true;
-  return prefixes.some(
-    (p) => pathname === p || pathname.startsWith(`${p}/`),
-  );
+  return prefixes.some((p) => pathname === p || pathname.startsWith(`${p}/`));
 }
 
 function HamburgerIcon({ open }: { open: boolean }) {

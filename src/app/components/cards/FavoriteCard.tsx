@@ -1,12 +1,12 @@
-import { Button } from '@/app/components/ui/Button';
+import { Button } from '@/app/components/buttons/Button';
 import Image from 'next/image';
 import Link from 'next/link';
 import type { Favorite, Room } from '@prisma/client';
 import { StarIcon } from '@/app/components/icons/StarIcon';
 import { LocationIcon } from '@/app/components/icons/LocationIcon';
 import { formatPrice } from '@/lib/amenities';
-import { FavoriteToggle } from './FavoriteToggle';
-import { toggleFavorite } from './actions';
+import { FavoriteToggle } from '../inputs/FavoriteToggle';
+import { toggleFavorite } from '../../favorites/actions';
 
 type FavoriteWithRoom = Favorite & { room: Room };
 

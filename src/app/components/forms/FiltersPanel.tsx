@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Button } from '@/app/components/ui/Button';
+import { Button } from '@/app/components/buttons/Button';
 import { InputField } from '@/app/components/inputs/InputField';
 import { CheckboxGroup } from '@/app/components/inputs/CheckboxGroup';
 

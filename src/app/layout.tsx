@@ -2,8 +2,8 @@ import type { Metadata } from 'next';
 import localFont from 'next/font/local';
 import { ClerkProvider } from '@clerk/nextjs';
 import Link from 'next/link';
-import { HeaderNav } from './components/HeaderNav';
-import { Footer } from './components/Footer';
+import { HeaderNav } from './components/layout/HeaderNav';
+import { Footer } from './components/layout/Footer';
 import './globals.css';
 
 const inter = localFont({

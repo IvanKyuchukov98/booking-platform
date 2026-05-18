@@ -1,10 +1,10 @@
 import type { Room } from '@prisma/client';
 import Image from 'next/image';
 import Link from 'next/link';
-import { Button } from '@/app/components/ui/Button';
+import { Button } from '@/app/components/buttons/Button';
 import { StarIcon } from '@/app/components/icons/StarIcon';
 import { AMENITIES, formatPrice } from '@/lib/amenities';
-import { FavoriteToggle } from '@/app/favorites/FavoriteToggle';
+import { FavoriteToggle } from '@/app/components/inputs/FavoriteToggle';
 
 type Props = {
   room: Room;

@@ -2,7 +2,7 @@
 
 import { useState, useTransition, type MouseEvent } from 'react';
 import { HeartIcon } from '@/app/components/icons/HeartIcon';
-import { toggleFavorite } from './actions';
+import { toggleFavorite } from '../../favorites/actions';
 
 type Props = {
   roomId: string;

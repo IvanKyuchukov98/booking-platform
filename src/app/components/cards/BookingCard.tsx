@@ -1,9 +1,9 @@
-import { Button } from '@/app/components/ui/Button';
+import { Button } from '@/app/components/buttons/Button';
 import Image from 'next/image';
 import Link from 'next/link';
 import type { BookingStatus, Room, RoomBooking } from '@prisma/client';
 import { LocationIcon } from '@/app/components/icons/LocationIcon';
-import { CancelBookingButton } from './CancelBookingButton';
+import { CancelBookingButton } from '../buttons/CancelBookingButton';
 
 type BookingWithRoom = RoomBooking & { room: Room };
 

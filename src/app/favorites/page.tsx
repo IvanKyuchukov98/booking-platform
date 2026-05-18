@@ -4,9 +4,9 @@ import { SelectField } from '@/app/components/inputs/SelectField';
 import { prisma } from '@/lib/prisma';
 import { getOrCreateDbUser } from '@/lib/auth';
 import type { Metadata } from 'next';
-import { Sidebar } from '@/app/components/Sidebar';
-import { EmptyState } from '@/app/components/EmptyState';
-import { FavoriteCard } from './FavoriteCard';
+import { Sidebar } from '@/app/components/layout/Sidebar';
+import { EmptyState } from '@/app/components/ui/EmptyState';
+import { FavoriteCard } from '../components/cards/FavoriteCard';
 
 export const metadata: Metadata = {
   title: 'Saved stays',

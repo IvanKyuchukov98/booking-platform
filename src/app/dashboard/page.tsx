@@ -3,9 +3,9 @@ import { ArrowRightIcon } from '@/app/components/icons';
 import type { Metadata } from 'next';
 import { prisma } from '@/lib/prisma';
 import { getOrCreateDbUser } from '@/lib/auth';
-import { Sidebar } from '@/app/components/Sidebar';
-import { EmptyState } from '@/app/components/EmptyState';
-import { BookingCard } from './BookingCard';
+import { Sidebar } from '@/app/components/layout/Sidebar';
+import { EmptyState } from '@/app/components/ui/EmptyState';
+import { BookingCard } from '../components/cards/BookingCard';
 
 export const metadata: Metadata = {
   title: 'Your trips',

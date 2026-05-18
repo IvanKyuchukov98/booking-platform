@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { Button } from '@/app/components/ui/Button';
+import { Button } from '@/app/components/buttons/Button';
 import Image from 'next/image';
 import { notFound } from 'next/navigation';
 import avatarImage from '@/public/images/avatar.jpg';
@@ -19,8 +19,8 @@ import {
   todayIsoDate,
 } from '@/lib/booking';
 import { getOrCreateDbUser } from '@/lib/auth';
-import { FavoriteToggle } from '@/app/favorites/FavoriteToggle';
-import { BookingForm } from './BookingForm';
+import { FavoriteToggle } from '@/app/components/inputs/FavoriteToggle';
+import { BookingForm } from '../../components/forms/BookingForm';
 
 type Props = { params: Promise<{ id: string }> };
 

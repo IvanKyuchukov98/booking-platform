@@ -2,7 +2,10 @@
 
 import { useActionState } from 'react';
 import { useFormStatus } from 'react-dom';
-import { cancelBooking, type CancelBookingState } from './actions';
+import {
+  cancelBooking,
+  type CancelBookingState,
+} from '../../dashboard/actions';
 
 function SubmitText() {
   const { pending } = useFormStatus();
